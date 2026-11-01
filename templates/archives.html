@@ -44,15 +44,26 @@
 
         <div class="wrapper container narrow">
           <section id="archive-list" class="yue float-up">
-            <th:block th:each="archive : ${archives.items}">
-              <h2>
-                <span th:text="${archive.year}"></span>
-                <span
-                  class="num-posts"
-                  th:text="|${#aggregates.sum(archive.months.![#lists.size(posts)])} 篇|"
-                ></span>
-              </h2>
-              <section th:id="|year-${archive.year}|" class="year">
+            <th:block th:each="archive, iter : ${archives.items}">
+              <th:block th:with="count=${#aggregates.sum(archive.months.![#lists.size(posts)])}">
+                <h2>
+                  <span th:text="${archive.year}"></span>
+                  <span class="num-posts" th:text="|${count} 篇|"></span>
+                  <a
+                    no-pjax
+                    target="_self"
+                    th:attr="data-num=${count},data-year=${archive.year}"
+                    class="toggle-archive"
+                    href="javascript:void(0);"
+                    th:text="${iter.index > 0} ? '+' : '-'"
+                    onclick="VOID_Ui.toggleArchive(this); return false;"
+                  ></a>
+                </h2>
+                <section
+                  th:id="|year-${archive.year}|"
+                  th:class="${'year' + (iter.index > 0 ? ' shrink' : '')}"
+                  th:style="|max-height: ${iter.index > 0 ? 0 : count * 49}px; transition-duration: ${count * 0.03 > 0.8 ? 0.8 : count * 0.03}s|"
+                >
                 <ul>
                   <th:block th:each="month : ${archive.months}">
                     <li th:each="post : ${month.posts}">
@@ -65,7 +76,8 @@
                     </li>
                   </th:block>
                 </ul>
-              </section>
+                </section>
+              </th:block>
             </th:block>
             <p th:if="${archives.total == 0}">还没有文章哦～</p>
           </section>

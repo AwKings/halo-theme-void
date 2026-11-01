@@ -47,9 +47,10 @@
             <th:block th:each="archive : ${archives.items}">
               <h2>
                 <span th:text="${archive.year}"></span>
-                <span class="num-posts">
-                  <th:block th:each="month : ${archive.months}" th:text="${#lists.size(month.posts)}"></th:block>
-                </span>
+                <span
+                  class="num-posts"
+                  th:text="|${#aggregates.sum(archive.months.![#lists.size(posts)])} 篇|"
+                ></span>
               </h2>
               <section th:id="|year-${archive.year}|" class="year">
                 <ul>

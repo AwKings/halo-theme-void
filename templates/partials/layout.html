@@ -91,8 +91,8 @@
         }
         .brand {
           font-family: BrandFont, sans-serif;
-          font-style: [[${theme.config.advanced.brand_font_style ?: 'normal'}]] !important;
-          font-weight: [[${theme.config.advanced.brand_font_weight ?: 'normal'}]] !important;
+          font-style: var(--void-brand-style, normal) !important;
+          font-weight: var(--void-brand-weight, normal) !important;
         }
       </style>
     </th:block>
@@ -115,6 +115,10 @@
   </head>
   <body
     th:attr="fontsize=${theme.config.content?.default_font_size ?: '3'}"
+    th:style="${!#strings.isEmpty(theme.config.advanced?.brand_font_src)
+      ? '--void-brand-style:' + (theme.config.advanced?.brand_font_style ?: 'normal')
+        + ';--void-brand-weight:' + (theme.config.advanced?.brand_font_weight ?: 'normal') + ';'
+      : null}"
     th:class="${(theme.config.basic?.color_scheme == '2' ? 'theme-dark ' : '')
       + (theme.config.basic?.index_style == '1' ? 'single-col ' : '')
       + ((theme.config.content?.serif_in_content ?: false) ? 'serif ' : '')

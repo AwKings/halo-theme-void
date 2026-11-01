@@ -1,0 +1,384 @@
+/*!
+ * VOID · 初之音风格头部（void_sanmizu 分支）
+ *
+ * 来源：https://www.himiku.com/usr/css/theme_v1.2.6.min.css
+ * 原作者 mikusaa（初之音），按 GPL/MIT 原样移植，仅做如下调整：
+ *   - 修正原表 `body.theme-dark header.container` 少了空格的选择器笔误
+ *   - 「极光」装饰段原样保留（需要 .aurora-container 标记才会生效，本主题未使用）
+ *
+ * 加载顺序在 void.css / void-content.css 之后，靠 !important 覆盖原主题的深色头部。
+ */
+
+.brand {
+    font-family: Palatino, Palatino Linotype, Palatino LT STD, Book Antiqua, Georgia, serif;
+}
+
+header {
+    background-color: #fff !important;
+    color: #222;
+    backdrop-filter: initial;
+    -webkit-backdrop-filter: initial;
+}
+
+header.pull-up {
+    box-shadow: initial;
+    border-bottom: 1px solid rgb(0 0 0 / 7%);
+}
+
+body.theme-dark header {
+    background-color: #1a1a1a !important;
+    /* 原表没有这条：暗色下 header 仍是 color:#222，搜索框文字继承后几乎看不见 */
+    color: #dfdfdf;
+}
+
+body.theme-dark header.pull-up {
+    border-color: rgb(0 0 0 / 35%);
+}
+
+body.theme-dark header.opened {
+    background-color: #020202 !important;
+}
+
+header .container nav {
+    z-index: 1;
+}
+
+header .container nav a,
+header .container nav span.dropdown {
+    margin: 0 .6rem;
+}
+
+body:not(.theme-dark) header .container nav a,
+body:not(.theme-dark) header .container nav span.dropdown {
+    color: #222;
+}
+
+header .container nav a.brand {
+    height: 2rem;
+    top: .9rem;
+    padding-top: 0.5rem;
+    text-transform: uppercase;
+    font-weight: 400;
+    opacity: 1;
+    visibility: visible;
+    transition: all ease-in-out .45s;
+}
+
+header .container nav span.dropdown ul {
+    top: 100%;
+    background: #fff !important;
+    border: 2px solid #eee;
+    box-shadow: initial !important;
+}
+
+body.theme-dark header .container nav span.dropdown ul {
+    background: #222 !important;
+    border-color: #181818;
+}
+
+header .container nav a:not(.brand):not(#toggle-mobile-search):hover,
+header .container nav span.dropdown:not(.brand):not(#toggle-mobile-search):hover {
+    background-color: transparent !important;
+}
+
+header .container nav a:not(.brand):hover {
+    opacity: .65;
+}
+
+body:not(.theme-dark) header .container nav>a,
+body:not(.theme-dark) header .container nav span.dropdown,
+body:not(.theme-dark) header .container nav>a:hover,
+body:not(.theme-dark) header .container nav span.dropdown:hover {
+    color: #222;
+}
+
+/* 移动端导航栏 */
+
+body:not(.theme-dark) #nav-mobile section,
+body:not(.theme-dark) #nav-mobile section * {
+    color: #1d1d1d;
+}
+
+#nav-mobile section {
+    padding-top: 1.75rem;
+}
+
+body:not(.theme-dark) #nav-mobile section {
+    border-bottom: 1px solid rgb(0 0 0 / 5%);
+}
+
+#nav-mobile section::before {
+    text-align: center;
+    width: 100%;
+}
+
+body:not(.theme-dark) #nav-mobile {
+    background: rgb(255 255 255 / 95%);
+}
+
+body:not(.theme-dark) header .container nav a.toggle span,
+body:not(.theme-dark) header .container nav a.toggle span::after,
+body:not(.theme-dark) header .container nav a.toggle span::before,
+body:not(.theme-dark) header .container nav span.dropdown.toggle span,
+body:not(.theme-dark) header .container nav span.dropdown.toggle span::after,
+body:not(.theme-dark) header .container nav span.dropdown.toggle span::before {
+    background-color: #222 !important;
+}
+
+body.theme-dark header .container nav a.toggle span,
+body.theme-dark header .container nav a.toggle span::after,
+body.theme-dark header .container nav a.toggle span::before,
+body.theme-dark header .container nav span.dropdown.toggle span,
+body.theme-dark header .container nav span.dropdown.toggle span::after,
+body.theme-dark header .container nav span.dropdown.toggle span::before {
+    background-color: #dfdfdf !important;
+}
+
+
+@media screen and (min-width: 767px) {
+    header {
+        padding-bottom: 15px;
+    }
+
+    header.pull-up {
+        top: -50px;
+    }
+
+    header .container {
+        height: 90px;
+    }
+
+    header .container nav {
+        justify-content: center;
+        align-items: flex-end;
+    }
+
+    header .container nav a,
+    header .container nav span.dropdown {
+        align-items: flex-end;
+        height: 30px;
+    }
+
+    header .container nav a.brand {
+        align-items: flex-start;
+        left: initial;
+    }
+
+    #nav-mobile {
+        padding-top: 4rem;
+    }
+
+    header .container nav a.toggle {
+        right: 10px;
+        height: 30px;
+    }
+
+    header.opened .container nav a.toggle {
+        display: flex;
+    }
+
+    header .container nav #toggle-mobile-search {
+        position: relative;
+        right: initial;
+        font-size: initial;
+        line-height: initial;
+        top: 0.1rem;
+    }
+
+    /* 原表写的是 90px，但 header 实高是「容器 90 + padding-bottom 15 = 105」，
+       照抄会让页面顶部 15px 藏在导航栏下面，这里按实高补偿。 */
+    #pjax-container {
+        padding-top: 105px;
+    }
+
+    main .lazy-wrap {
+        padding-top: 0px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    header .container nav a.brand {
+        top: .5rem;
+    }
+
+    header .container nav a#toggle-setting,
+    header .container nav span.dropdown#toggle-setting {
+        right: 2.25rem;
+    }
+}
+
+/* aurora effect（需要 .aurora-container 标记，本主题暂未使用） */
+
+.aurora-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    margin: 0 auto;
+    top: 0;
+    transform: rotate(180deg);
+    z-index: 0;
+}
+
+.aurora-lightings {
+    bottom: -160px;
+    position: absolute;
+    width: 100%;
+    animation: lighting-opacity 0.25s ease-in 1 normal, lighting-opacity 1s ease-out 9s 1 reverse;
+}
+
+@-webkit-keyframes lighting-opacity {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes lighting-opacity {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.aurora-layer {
+    border-radius: 50%;
+    height: 20px;
+    width: 100%;
+    position: relative;
+    margin: auto;
+}
+
+#one {
+    -webkit-animation: one 5s ease-in-out 2 alternate;
+    animation: one 5s ease-in-out 2 alternate;
+}
+
+@-webkit-keyframes one {
+    from {
+        box-shadow: 0 0 250px 20px #473C78;
+    }
+
+    to {
+        box-shadow: 0 0 100px 15px #F72A3B;
+    }
+}
+
+@keyframes one {
+    from {
+        box-shadow: 0 0 250px 20px #473C78;
+    }
+
+    to {
+        box-shadow: 0 0 100px 15px #F72A3B;
+    }
+}
+
+#two {
+    width: 90%;
+    -webkit-animation: two 4s ease-in-out 2.5 alternate;
+    animation: two 4s ease-in-out 2.5 alternate;
+}
+
+@-webkit-keyframes two {
+    from {
+        box-shadow: 0 0 250px 20px #18C499;
+    }
+
+    to {
+        box-shadow: 0 0 100px 15px #D8F05E;
+    }
+}
+
+@keyframes two {
+    from {
+        box-shadow: 0 0 250px 20px #18C499;
+    }
+
+    to {
+        box-shadow: 0 0 100px 15px #D8F05E;
+    }
+}
+
+#three {
+    width: 80%;
+    -webkit-animation: three 3s ease-in-out 3.33 alternate;
+    animation: three 3s ease-in-out 3.33 alternate;
+}
+
+@-webkit-keyframes three {
+    from {
+        box-shadow: 0 0 250px 20px #FFDD00;
+    }
+
+    to {
+        box-shadow: 0 0 100px 15px #3E33FF;
+    }
+}
+
+@keyframes three {
+    from {
+        box-shadow: 0 0 250px 20px #FFDD00;
+    }
+
+    to {
+        box-shadow: 0 0 100px 15px #3E33FF;
+    }
+}
+
+#four {
+    width: 70%;
+    -webkit-animation: four 2s ease-in-out 5 alternate;
+    animation: four 2s ease-in-out 5 alternate;
+}
+
+@-webkit-keyframes four {
+    from {
+        box-shadow: 0 0 250px 20px #781848;
+    }
+
+    to {
+        box-shadow: 0 0 100px 15px #F2BBE9;
+    }
+}
+
+@keyframes four {
+    from {
+        box-shadow: 0 0 250px 20px #781848;
+    }
+
+    to {
+        box-shadow: 0 0 100px 15px #F2BBE9;
+    }
+}
+
+#five {
+    width: 60%;
+    -webkit-animation: five 1s ease-in-out 10 alternate;
+    animation: five 1s ease-in-out 10 alternate;
+}
+
+@-webkit-keyframes five {
+    from {
+        box-shadow: 0 0 250px 20px #42F2A1;
+    }
+
+    to {
+        box-shadow: 0 0 100px 15px #F4F6AD;
+    }
+}
+
+@keyframes five {
+    from {
+        box-shadow: 0 0 250px 20px #42F2A1;
+    }
+
+    to {
+        box-shadow: 0 0 100px 15px #F4F6AD;
+    }
+}

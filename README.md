@@ -4,7 +4,7 @@
 
 移植者：awking。原主题作者：熊猫小A（https://blog.imalan.cn）。
 
-移植说明（含功能清单、设置项、与原版的差异）：http://163.192.199.131:8090/archives/halo-theme-void
+移植说明（含功能清单、设置项、与原版的差异）：https://blog.sanmizu.com/archives/halo-theme-void
 
 ## 特性
 

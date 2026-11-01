@@ -51,19 +51,70 @@
 - 文章模板 `Landscape`：巨大标题的沉浸式排版
 - 页面模板 `归档`：按年份归档 + 标签云
 
+## 扩展语法
+
+以下语法由 `plugin-void` 在服务端解析（`ReactivePostContentHandler`），
+在 Markdown 或富文本编辑器里直接写即可，代码块内的同名标记不会被解析。
+
+### 图片排版（可用作相册）
+
+```
+[photos]
+![](1.jpg)
+![](2.jpg)
+![](3.jpg)
+[/photos]
+```
+
+解析为 `.photos` 相册：桌面端每行最多 4 张、移动端 2 张，等高等宽裁切，
+点击任意一张打开 fancybox 灯箱（同组图片可左右切换），`alt` 作为图注显示。
+
+普通图片会自动包成 `<figure>` 并带灯箱，无需额外标记。
+
+### 提示块
+
+```
+[notice]这里是一段需要强调的内容。[/notice]
+```
+
+渲染为 `<p class="notice">`，左侧黄色竖线 + 浅色底。
+
+### 注音
+
+```
+{{漢字:かんじ}}
+```
+
+渲染为 `<ruby>漢字<rt>かんじ</rt></ruby>`。
+
+### 友链列表
+
+```
+[links]
+[站点名称](https://example.com)+(https://example.com/avatar.png)
+[/links]
+```
+
+渲染为卡片网格：上方缩略图、下方站点名，整卡可点击。
+
+### 标题锚点
+
+正文 `h2`–`h6` 会自动补 `id="toc_N"`，主题的目录（tocbot）依赖它跳转。
+
 ## 与 Typecho 原版的差异
 
 - PHP 模板逻辑改为 Halo Finder API（`postFinder`、`categoryFinder`、`tagFinder`、`menuFinder`）
 - 原配套插件（`VOID-3.5.1/2.配套插件`）已移植为 Halo 插件 `plugin-void`：文章点赞、评论赞踩（按 IP 去重）、访客互动记录
 - 浏览量用 Halo 内核 `post.stats.visit`；字数统计改为主题侧 JS 计算
 - 评论使用 Halo 官方评论组件；评论赞踩按钮尚未注入到该组件（其 Lit + 多层 shadow DOM 结构），插件接口已就绪
+- 原版「图片宽高」（插件在上传时把 `#vwid/#vhei` 拼到图片地址）未移植，改为 CSS 自适应：单图按原始比例显示，相册用固定行高 + `object-fit: cover`
 - OwO 表情、文章归档短代码未移植
 - 搜索改为前端检索 Halo 公开文章接口（最多取 200 篇）
 - 静态资源统一放在 `templates/assets/`（Halo 2.22 的资源路由要求）
 
 ## 依赖插件
 
-配合 [plugin-void](https://github.com/AlanDecode/Typecho-Theme-VOID)（VOID 增强）使用效果最佳：
+配合 [plugin-void](https://github.com/AwKings/halo-plugin-void)（VOID 增强）使用效果最佳：
 
 - 未启用插件时：点赞按钮仍显示，但只写 Halo 内核计数，没有互动明细
 - 启用插件后：点赞/评论赞踩按 IP 去重，Console 出现「工具 → 访客互动」

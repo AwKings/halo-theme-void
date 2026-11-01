@@ -1,0 +1,95 @@
+/*!
+ * VOID 扩展语法的样式补充（Halo 移植）
+ *
+ * 原主题靠插件在图片 URL 上附加 #vwid/#vhei 计算宽高比，
+ * 再用 a 的 padding-top 撑出占位高度。Halo 侧拿不到这两个值，
+ * 因此这里把 figure 内的链接改为按内容高度自适应，
+ * 相册（.photos）则用固定行高 + object-fit: cover 保持整齐。
+ *
+ * 选择器统一带 article .articleBody 前缀：
+ * 原主题的 a[data-fancybox="gallery"] 带属性选择器（权重相当于一个类），
+ * 不加前缀压不过它。
+ */
+
+/* ---------- 单张图片 ---------- */
+article .articleBody figure > a.void-img,
+article .articleBody figure > a.void-img-inline {
+    display: block;
+    height: auto;
+    padding-top: 0;
+    overflow: visible;
+    background-color: transparent;
+}
+
+article .articleBody figure > a.void-img img,
+article .articleBody figure > a.void-img-inline img {
+    position: static;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+article .articleBody figure {
+    max-width: 100% !important;
+}
+
+/* ---------- 图片排版 / 相册 ---------- */
+article .articleBody .photos {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+article .articleBody .photos figure {
+    flex: 1 1 calc(25% - 5px);
+    min-width: 110px;
+    margin: 2.5px;
+}
+
+article .articleBody .photos figure > a.void-img {
+    display: block;
+    height: 170px;
+    padding-top: 0;
+    overflow: hidden;
+}
+
+article .articleBody .photos figure > a.void-img img {
+    position: static;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+article .articleBody .photos figure figcaption {
+    opacity: 0.75;
+}
+
+article .articleBody .photos figure:hover figcaption {
+    opacity: 1;
+}
+
+@media screen and (max-width: 767px) {
+    article .articleBody .photos figure {
+        flex: 1 1 calc(50% - 5px);
+    }
+
+    article .articleBody .photos figure > a.void-img {
+        height: 130px;
+    }
+}
+
+/* ---------- 注音 ---------- */
+article .articleBody ruby rt {
+    font-size: 0.55em;
+    opacity: 0.8;
+}
+
+/* ---------- 友链列表 ---------- */
+article .articleBody .board-list.link-list .board-thumb img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

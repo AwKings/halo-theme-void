@@ -1,0 +1,82 @@
+<!doctype html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{partials/layout :: html(title = ${singlePage.spec.title + ' - ' + site.title}, head = ~{::head}, content = ~{::content})}"
+>
+  <th:block th:fragment="head">
+    <th:block th:if="${(theme.config.seo?.enable_metadata ?: false)}">
+      <link rel="canonical" th:href="@{${site.url + singlePage.status.permalink}}" />
+      <meta property="og:type" content="article" />
+      <meta property="og:title" th:content="${singlePage.spec.title}" />
+      <meta property="og:site_name" th:content="${site.title}" />
+      <meta property="og:url" th:content="${site.url + singlePage.status.permalink}" />
+    </th:block>
+  </th:block>
+
+  <th:block th:fragment="content">
+    <th:block
+      th:with="
+        bannerStyle=${#annotations.getOrDefault(singlePage, 'void_banner_style', '0')},
+        rawBanner=${#annotations.getOrDefault(singlePage, 'void_banner', singlePage.spec.cover ?: '')},
+        banner=${bannerStyle == '2' ? '' : rawBanner}
+      "
+    >
+      <main id="pjax-container">
+        <div
+          th:class="${'lazy-wrap' + (#strings.isEmpty(banner) ? ' no-banner' : ' loading dark')}"
+        >
+          <div id="banner" th:if="${!#strings.isEmpty(banner)}" th:classappend="${bannerStyle == '1'} ? ' blur' : ''">
+            <img
+              th:if="${(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload browserlevel-lazy"
+              th:src="${banner}"
+              loading="lazy"
+              alt=""
+            />
+            <img
+              th:if="${!(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload"
+              th:attr="data-src=${banner}"
+              alt=""
+            />
+          </div>
+          <script th:if="${!#strings.isEmpty(banner)}">
+            $('body>header').removeClass('force-dark').removeClass('no-banner');
+          </script>
+          <script th:if="${#strings.isEmpty(banner)}">
+            $('body>header').addClass('force-dark').addClass('no-banner');
+          </script>
+
+          <div class="banner-title">
+            <h1 class="post-title" th:text="${singlePage.spec.title}"></h1>
+            <p class="post-meta">
+              <time
+                th:if="${singlePage.spec.publishTime != null}"
+                th:datetime="${singlePage.spec.publishTime}"
+                th:text="${#temporals.format(singlePage.spec.publishTime, 'yyyy-MM-dd')}"
+              ></time>
+            </p>
+          </div>
+        </div>
+
+        <div class="wrapper container">
+          <div class="contents-wrap">
+            <section id="post" class="float-up">
+              <article class="post yue">
+                <div class="articleBody full" th:utext="${singlePage.content.content}"></div>
+              </article>
+            </section>
+          </div>
+        </div>
+
+        <div class="comments-container float-up">
+          <section id="comments" class="container">
+            <th:block th:if="${haloCommentEnabled}">
+              <halo:comment group="content.halo.run" kind="SinglePage" th:attr="name=${singlePage.metadata.name}" />
+            </th:block>
+          </section>
+        </div>
+      </main>
+    </th:block>
+  </th:block>
+</html>

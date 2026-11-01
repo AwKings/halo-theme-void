@@ -1,0 +1,97 @@
+<th:block th:fragment="card(post, showMore)" xmlns:th="https://www.thymeleaf.org">
+  <th:block
+    th:with="
+      bannerUrl=${#annotations.getOrDefault(post, 'void_banner', post.spec.cover ?: '')},
+      coverStyle=${#strings.isEmpty(bannerUrl) ? '0' : #annotations.getOrDefault(post, 'void_banner_as_cover', '1')},
+      fullContent=${#annotations.getOrDefault(post, 'void_show_full_content', '0') == '1'},
+      customExcerpt=${#annotations.getOrDefault(post, 'void_excerpt', '')}
+    "
+  >
+    <li
+      th:id="|p-${post.metadata.name}|"
+      th:class="|masonry-item style-${coverStyle}${fullContent ? ' full-content' : ''}|"
+    >
+      <a th:unless="${fullContent}" th:href="@{${post.status.permalink}}">
+        <article class="yue">
+          <div class="banner" th:if="${!fullContent and !#strings.isEmpty(bannerUrl)}">
+            <img
+              th:if="${(theme.config.content?.lazyload ?: false) and (theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload browserlevel-lazy"
+              th:src="${bannerUrl}"
+              loading="lazy"
+              alt=""
+            />
+            <img
+              th:if="${(theme.config.content?.lazyload ?: false) and !(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload"
+              th:attr="data-src=${bannerUrl}"
+              alt=""
+            />
+            <img
+              th:if="${!(theme.config.content?.lazyload ?: false)}"
+              th:src="${bannerUrl}"
+              alt=""
+            />
+          </div>
+          <div class="content-wrap">
+            <div class="post-meta-index">
+              <time
+                th:datetime="${post.spec.publishTime}"
+                th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+              ></time>
+            </div>
+            <h1 class="title" th:text="${post.spec.title}"></h1>
+            <p class="headline content" th:if="${!#strings.isEmpty(customExcerpt)}" th:text="${customExcerpt}"></p>
+            <div class="articleBody">
+              <p th:if="${!#strings.isEmpty(customExcerpt)}"></p>
+              <p th:if="${#strings.isEmpty(customExcerpt) and !fullContent}" th:utext="${post.status.excerpt}"></p>
+              <th:block th:if="${fullContent}">
+                <div th:utext="${postFinder.content(post.metadata.name).content}"></div>
+              </th:block>
+            </div>
+            <p class="excerpt" th:if="${showMore}">
+              <a class="full-link" th:href="@{${post.status.permalink}}">阅读全文</a>
+            </p>
+          </div>
+        </article>
+      </a>
+
+      <th:block th:if="${fullContent}">
+        <article class="yue">
+          <div class="banner" th:if="${!#strings.isEmpty(bannerUrl)}">
+            <img
+              th:if="${(theme.config.content?.lazyload ?: false) and (theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload browserlevel-lazy"
+              th:src="${bannerUrl}"
+              loading="lazy"
+              alt=""
+            />
+            <img
+              th:if="${(theme.config.content?.lazyload ?: false) and !(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload"
+              th:attr="data-src=${bannerUrl}"
+              alt=""
+            />
+            <img th:if="${!(theme.config.content?.lazyload ?: false)}" th:src="${bannerUrl}" alt="" />
+          </div>
+          <div class="content-wrap">
+            <div class="post-meta-index">
+              <time
+                th:datetime="${post.spec.publishTime}"
+                th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+              ></time>
+            </div>
+            <h1 class="title">
+              <a th:href="@{${post.status.permalink}}" th:text="${post.spec.title}"></a>
+            </h1>
+            <p class="headline content" th:if="${!#strings.isEmpty(customExcerpt)}" th:text="${customExcerpt}"></p>
+            <div class="articleBody" th:utext="${postFinder.content(post.metadata.name).content}"></div>
+          </div>
+        </article>
+      </th:block>
+    </li>
+    <script th:inline="javascript">
+      VOID_Ui.MasonryCtrler.watch(/*[[|p-${post.metadata.name}|]]*/ 'p-0');
+    </script>
+  </th:block>
+</th:block>

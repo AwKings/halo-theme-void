@@ -1,0 +1,45 @@
+<!doctype html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{partials/layout :: html(title = |标签 - ${site.title}|, head = null, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <th:block th:with="banner=${theme.config.basic?.default_banner ?: ''}">
+      <main id="pjax-container">
+        <div
+          th:class="${'lazy-wrap' + (#strings.isEmpty(banner) ? ' no-banner' : ' loading dark')}"
+        >
+          <div id="banner" th:if="${!#strings.isEmpty(banner)}">
+            <img class="lazyload" th:attr="data-src=${banner}" alt="" />
+          </div>
+          <script th:if="${!#strings.isEmpty(banner)}">
+            $('body>header').removeClass('force-dark').removeClass('no-banner');
+          </script>
+          <script th:if="${#strings.isEmpty(banner)}">
+            $('body>header').addClass('force-dark').addClass('no-banner');
+          </script>
+          <div class="banner-title">
+            <h1 class="post-title">Tags</h1>
+            <p class="post-meta">
+              <span th:text="|${#lists.size(tags)} 个标签|"></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="wrapper container narrow">
+          <div class="tag-cloud yue float-up">
+            <a
+              th:each="tag : ${tags}"
+              rel="tag"
+              class="tag-item"
+              th:href="@{${tag.status.permalink}}"
+              th:title="|${tag.postCount} 个话题|"
+              th:text="${tag.spec.displayName}"
+            ></a>
+            <p th:if="${#lists.isEmpty(tags)}">还没有标签哦～</p>
+          </div>
+        </div>
+      </main>
+    </th:block>
+  </th:block>
+</html>

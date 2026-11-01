@@ -1,0 +1,73 @@
+<!doctype html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{partials/layout :: html(title = ${site.title}, head = null, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <main id="pjax-container">
+      <th:block
+        th:with="
+          banner=${theme.config.basic?.default_banner ?: ''},
+          bannerTitle=${#strings.isEmpty(theme.config.basic?.index_banner_title ?: '') ? site.title : theme.config.basic.index_banner_title},
+          bannerSubtitle=${#strings.isEmpty(theme.config.basic?.index_banner_subtitle ?: '') ? (site.subtitle ?: '') : theme.config.basic.index_banner_subtitle}
+        "
+      >
+        <div
+          class="lazy-wrap index"
+          th:class="${'lazy-wrap index' + (#strings.isEmpty(banner) ? ' no-banner' : ' loading dark')}"
+        >
+          <div id="banner" th:if="${!#strings.isEmpty(banner)}">
+            <img
+              th:if="${(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload browserlevel-lazy"
+              th:src="${banner}"
+              loading="lazy"
+              alt=""
+            />
+            <img
+              th:if="${!(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload"
+              th:attr="data-src=${banner}"
+              alt=""
+            />
+          </div>
+          <script th:if="${!#strings.isEmpty(banner)}">
+            $('body>header').removeClass('force-dark').removeClass('no-banner');
+          </script>
+          <script th:if="${#strings.isEmpty(banner)}">
+            $('body>header').addClass('force-dark').addClass('no-banner');
+          </script>
+
+          <div
+            class="banner-title index"
+            th:classappend="${!#strings.isEmpty(banner)} ? ' force-normal' : ''"
+          >
+            <h1 class="post-title">
+              <span class="brand"><span th:text="${bannerTitle}"></span></span><br />
+              <span class="subtitle" th:text="${bannerSubtitle}"></span>
+            </h1>
+          </div>
+        </div>
+      </th:block>
+
+      <div
+        class="wrapper container"
+        th:classappend="${theme.config.basic?.index_style == '1'} ? ' narrow' : ' wide'"
+      >
+        <section id="index-list" class="float-up">
+          <ul id="masonry">
+            <th:block th:each="post : ${posts.items}">
+              <th:block th:replace="~{partials/post-card :: card(${post}, false)}" />
+            </th:block>
+          </ul>
+          <div th:if="${posts.total == 0}" class="no-post">
+            <p>还没有文章哦～</p>
+          </div>
+        </section>
+        <th:block
+          th:replace="~{partials/pagination :: pager(context = '/', prevUrl = ${posts.prevUrl}, nextUrl = ${posts.nextUrl}, totalPages = ${posts.totalPages}, page = ${posts.page}, hasPrevious = ${posts.hasPrevious()}, hasNext = ${posts.hasNext()})}"
+        />
+      </div>
+    </main>
+  </th:block>
+</html>

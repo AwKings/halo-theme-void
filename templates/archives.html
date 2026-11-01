@@ -1,0 +1,79 @@
+<!doctype html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{partials/layout :: html(title = |归档 - ${site.title}|, head = null, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <th:block th:with="banner=${theme.config.basic?.default_banner ?: ''}">
+      <main id="pjax-container">
+        <div
+          th:class="${'lazy-wrap' + (#strings.isEmpty(banner) ? ' no-banner' : ' loading dark')}"
+        >
+          <div id="banner" th:if="${!#strings.isEmpty(banner)}">
+            <img
+              th:if="${(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload browserlevel-lazy"
+              th:src="${banner}"
+              loading="lazy"
+              alt=""
+            />
+            <img
+              th:if="${!(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload"
+              th:attr="data-src=${banner}"
+              alt=""
+            />
+          </div>
+          <script th:if="${!#strings.isEmpty(banner)}">
+            $('body>header').removeClass('force-dark').removeClass('no-banner');
+          </script>
+          <script th:if="${#strings.isEmpty(banner)}">
+            $('body>header').addClass('force-dark').addClass('no-banner');
+          </script>
+
+          <div class="banner-title">
+            <h1 class="post-title">归档</h1>
+            <p class="post-meta">
+              <span
+                th:with="stats=${siteStatsFinder.getStats()}"
+                th:text="|${stats.post} 文章 × ${stats.category} 分类 × ${stats.comment} 评论|"
+              ></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="wrapper container narrow">
+          <section id="archive-list" class="yue float-up">
+            <th:block th:each="archive : ${archives.items}">
+              <h2>
+                <span th:text="${archive.year}"></span>
+                <span class="num-posts">
+                  <th:block th:each="month : ${archive.months}" th:text="${#lists.size(month.posts)}"></th:block>
+                </span>
+              </h2>
+              <section th:id="|year-${archive.year}|" class="year">
+                <ul>
+                  <th:block th:each="month : ${archive.months}">
+                    <li th:each="post : ${month.posts}">
+                      <a class="archive-title" th:href="@{${post.status.permalink}}">
+                        <span
+                          class="date"
+                          th:text="${#temporals.format(post.spec.publishTime, 'MM-dd')}"
+                        ></span><span th:text="${post.spec.title}"></span>
+                      </a>
+                    </li>
+                  </th:block>
+                </ul>
+              </section>
+            </th:block>
+            <p th:if="${archives.total == 0}">还没有文章哦～</p>
+          </section>
+
+          <th:block
+            th:replace="~{partials/pagination :: pager(context = ${site.routes.archivesUri + '/'}, prevUrl = ${archives.prevUrl}, nextUrl = ${archives.nextUrl}, totalPages = ${archives.totalPages}, page = ${archives.page}, hasPrevious = ${archives.hasPrevious()}, hasNext = ${archives.hasNext()})}"
+          />
+        </div>
+      </main>
+    </th:block>
+  </th:block>
+</html>

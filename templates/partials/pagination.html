@@ -1,0 +1,19 @@
+<th:block
+  th:fragment="pager(context, prevUrl, nextUrl, totalPages, page, hasPrevious, hasNext)"
+  xmlns:th="https://www.thymeleaf.org"
+>
+  <ul class="pager" th:if="${totalPages != null and totalPages > 1}">
+    <li class="prev" th:classappend="${!hasPrevious} ? ' disabled' : ''">
+      <a th:if="${hasPrevious}" th:href="@{${prevUrl}}"><span aria-label="上一页">←</span></a>
+      <span th:unless="${hasPrevious}" aria-label="上一页">←</span>
+    </li>
+    <li th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == page} ? ' current' : ''">
+      <a th:if="${i != page}" th:href="@{|${context}page/${i}|}" th:text="${i}"></a>
+      <span th:if="${i == page}" th:text="${i}"></span>
+    </li>
+    <li class="next" th:classappend="${!hasNext} ? ' disabled' : ''">
+      <a th:if="${hasNext}" th:href="@{${nextUrl}}"><span aria-label="下一页">→</span></a>
+      <span th:unless="${hasNext}" aria-label="下一页">→</span>
+    </li>
+  </ul>
+</th:block>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{partials/layout :: html(title = ${category.spec.displayName + ' - ' + site.title}, head = null, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <th:block
+      th:with="banner=${#strings.isEmpty(category.spec.cover ?: '') ? (theme.config.basic?.default_banner ?: '') : category.spec.cover}"
+    >
+      <main id="pjax-container">
+        <div
+          th:class="${'lazy-wrap' + (#strings.isEmpty(banner) ? ' no-banner' : ' loading dark')}"
+        >
+          <div id="banner" th:if="${!#strings.isEmpty(banner)}">
+            <img
+              th:if="${(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload browserlevel-lazy"
+              th:src="${banner}"
+              loading="lazy"
+              alt=""
+            />
+            <img
+              th:if="${!(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload"
+              th:attr="data-src=${banner}"
+              alt=""
+            />
+          </div>
+          <script th:if="${!#strings.isEmpty(banner)}">
+            $('body>header').removeClass('force-dark').removeClass('no-banner');
+          </script>
+          <script th:if="${#strings.isEmpty(banner)}">
+            $('body>header').addClass('force-dark').addClass('no-banner');
+          </script>
+
+          <div class="banner-title">
+            <h1 class="post-title" th:text="|分类 “${category.spec.displayName}” 下的文章|"></h1>
+            <p class="post-meta" th:if="${category.postCount != null}">
+              <span th:text="${category.postCount + ' 篇文章'}"></span>
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="wrapper container"
+          th:classappend="${theme.config.basic?.index_style == '1'} ? ' narrow' : ' wide'"
+        >
+          <section id="index-list" class="float-up">
+            <ul id="masonry">
+              <th:block th:each="post : ${posts.items}">
+              <th:block th:replace="~{partials/post-card :: card(${post}, true)}" />
+            </th:block>
+            </ul>
+            <div th:if="${posts.total == 0}" class="no-post">
+              <p>这里还没有文章哦～</p>
+            </div>
+          </section>
+          <th:block
+            th:replace="~{partials/pagination :: pager(context = ${category.status.permalink + '/'}, prevUrl = ${posts.prevUrl}, nextUrl = ${posts.nextUrl}, totalPages = ${posts.totalPages}, page = ${posts.page}, hasPrevious = ${posts.hasPrevious()}, hasNext = ${posts.hasNext()})}"
+          />
+        </div>
+      </main>
+    </th:block>
+  </th:block>
+</html>

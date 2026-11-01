@@ -1,0 +1,54 @@
+<!doctype html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{partials/layout :: html(title = |分类 - ${site.title}|, head = null, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <th:block th:with="banner=${theme.config.basic?.default_banner ?: ''}">
+      <main id="pjax-container">
+        <div
+          th:class="${'lazy-wrap' + (#strings.isEmpty(banner) ? ' no-banner' : ' loading dark')}"
+        >
+          <div id="banner" th:if="${!#strings.isEmpty(banner)}">
+            <img class="lazyload" th:attr="data-src=${banner}" alt="" />
+          </div>
+          <script th:if="${!#strings.isEmpty(banner)}">
+            $('body>header').removeClass('force-dark').removeClass('no-banner');
+          </script>
+          <script th:if="${#strings.isEmpty(banner)}">
+            $('body>header').addClass('force-dark').addClass('no-banner');
+          </script>
+          <div class="banner-title">
+            <h1 class="post-title">Categories</h1>
+            <p class="post-meta">
+              <span th:text="|${#lists.size(categories)} 个分类|"></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="wrapper container narrow">
+          <div class="tag-cloud yue float-up">
+            <th:block th:each="cat : ${categories}">
+              <a
+                class="tag-item"
+                th:href="@{${cat.status.permalink}}"
+                th:title="|${cat.postCount} 篇文章|"
+                th:text="|${cat.spec.displayName} (${cat.postCount})|"
+              ></a>
+              <th:block th:if="${cat.children != null and !#lists.isEmpty(cat.children)}">
+                <a
+                  th:each="child : ${cat.children}"
+                  class="tag-item"
+                  th:href="@{${child.status.permalink}}"
+                  th:title="|${child.postCount} 篇文章|"
+                  th:text="|${child.spec.displayName} (${child.postCount})|"
+                ></a>
+              </th:block>
+            </th:block>
+            <p th:if="${#lists.isEmpty(categories)}">还没有分类哦～</p>
+          </div>
+        </div>
+      </main>
+    </th:block>
+  </th:block>
+</html>

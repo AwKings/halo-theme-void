@@ -1,0 +1,142 @@
+<!doctype html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{partials/layout :: html(title = |搜索 - ${site.title}|, head = null, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <th:block th:with="banner=${theme.config.basic?.default_banner ?: ''}">
+      <main id="pjax-container">
+        <div
+          th:class="${'lazy-wrap' + (#strings.isEmpty(banner) ? ' no-banner' : ' loading dark')}"
+        >
+          <div id="banner" th:if="${!#strings.isEmpty(banner)}">
+            <img class="lazyload" th:attr="data-src=${banner}" alt="" />
+          </div>
+          <script th:if="${!#strings.isEmpty(banner)}">
+            $('body>header').removeClass('force-dark').removeClass('no-banner');
+          </script>
+          <script th:if="${#strings.isEmpty(banner)}">
+            $('body>header').addClass('force-dark').addClass('no-banner');
+          </script>
+          <div class="banner-title">
+            <h1 class="post-title">搜索</h1>
+            <p class="post-meta">
+              <span id="search-summary">正在检索……</span>
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="wrapper container"
+          th:classappend="${theme.config.basic?.index_style == '1'} ? ' narrow' : ' wide'"
+        >
+          <section id="index-list" class="float-up">
+            <ul id="masonry"></ul>
+            <div id="search-empty" class="no-post" style="display: none">
+              <p>没有找到相关文章，换个关键词试试？</p>
+            </div>
+          </section>
+        </div>
+      </main>
+    </th:block>
+
+    <script>
+      (function () {
+        var keyword = (new URLSearchParams(window.location.search).get('keyword') || '').trim();
+        var summary = document.getElementById('search-summary');
+        var list = document.getElementById('masonry');
+        var empty = document.getElementById('search-empty');
+
+        function escapeHtml(text) {
+          var div = document.createElement('div');
+          div.textContent = text == null ? '' : text;
+          return div.innerHTML;
+        }
+
+        function stripHtml(html) {
+          var div = document.createElement('div');
+          div.innerHTML = html == null ? '' : html;
+          return div.textContent || '';
+        }
+
+        function card(post) {
+          var title = post.spec.title || '';
+          var permalink = post.status.permalink;
+          var excerpt = post.status.excerpt || '';
+          var date = (post.spec.publishTime || '').slice(0, 10);
+          var li = document.createElement('li');
+          li.id = 'p-' + post.metadata.name;
+          li.className = 'masonry-item style-0';
+          li.innerHTML =
+            '<a href="' +
+            permalink +
+            '"><article class="yue"><div class="content-wrap">' +
+            '<div class="post-meta-index"><time datetime="' +
+            date +
+            '">' +
+            date +
+            '</time></div>' +
+            '<h1 class="title">' +
+            escapeHtml(title) +
+            '</h1>' +
+            '<div class="articleBody"><p>' +
+            excerpt +
+            '</p></div>' +
+            '<p class="excerpt"><a class="full-link" href="' +
+            permalink +
+            '">阅读全文</a></p>' +
+            '</div></article></a>';
+          return li;
+        }
+
+        if (!keyword) {
+          summary.textContent = '请输入关键词';
+          empty.style.display = 'block';
+          return;
+        }
+
+        summary.textContent = '正在检索 “' + keyword + '” ……';
+        var url =
+          '/apis/api.content.halo.run/v1alpha1/posts?page=0&size=200&sort=spec.publishTime,desc';
+
+        fetch(url, { headers: { Accept: 'application/json' } })
+          .then(function (resp) {
+            return resp.json();
+          })
+          .then(function (data) {
+            var lower = keyword.toLowerCase();
+            var matched = (data.items || []).filter(function (post) {
+              var title = (post.spec.title || '').toLowerCase();
+              var excerpt = stripHtml(post.status.excerpt || '').toLowerCase();
+              return title.indexOf(lower) > -1 || excerpt.indexOf(lower) > -1;
+            });
+            matched.forEach(function (post) {
+              list.appendChild(card(post));
+            });
+            summary.textContent = '共找到 ' + matched.length + ' 篇相关文章';
+            if (matched.length === 0) {
+              empty.style.display = 'block';
+            }
+            if (window.VOID_Ui) {
+              VOID_Ui.MasonryCtrler.init();
+              matched.forEach(function (post) {
+                try {
+                  VOID_Ui.MasonryCtrler.watch('p-' + post.metadata.name);
+                } catch (e) {
+                  /* ignore */
+                }
+              });
+            }
+            if (window.VOID_Content) {
+              VOID_Content.highlight();
+              VOID_Content.pangu();
+            }
+          })
+          .catch(function () {
+            summary.textContent = '检索失败，请稍后再试';
+            empty.style.display = 'block';
+          });
+      })();
+    </script>
+  </th:block>
+</html>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{partials/layout :: html(title = |服务器错误 - ${site.title}|, head = null, content = ~{::content})}"
+>
+  <th:block th:fragment="content">
+    <main id="pjax-container">
+      <style>
+        main {
+          background: #000;
+        }
+        footer {
+          display: none;
+        }
+      </style>
+      <div class="lazy-wrap not-found">
+        <div class="banner-title">
+          <h1 class="post-title">
+            <span class="glitch">0</span>
+          </h1>
+          <p class="post-meta">
+            <span>服务器开小差了，请稍后再试。</span>
+            <a th:href="@{/}">回到首页</a>
+          </p>
+        </div>
+      </div>
+    </main>
+  </th:block>
+</html>

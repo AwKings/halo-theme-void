@@ -1,0 +1,129 @@
+<!doctype html>
+<html
+  lang="zh-CN"
+  xmlns:th="https://www.thymeleaf.org"
+  th:fragment="html (title, head, content)"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="renderer" content="webkit" />
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title th:text="${title != null and title != '' ? title : site.title}">Halo</title>
+
+    <link
+      rel="stylesheet"
+      th:href="@{/assets/css/bundle.css?v={v}(v=${theme.spec.version})}"
+    />
+    <link
+      rel="stylesheet"
+      th:href="@{/assets/css/void.css?v={v}(v=${theme.spec.version})}"
+    />
+
+    <script th:src="@{/assets/js/bundle-header.js?v={v}(v=${theme.spec.version})}"></script>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      var VOIDConfig = {
+        PJAX: false,
+        searchBase: /*[[@{/search?keyword=}]]*/ '/search?keyword=',
+        home: /*[[@{/}]]*/ '/',
+        buildTime: '',
+        enableMath: /*[[${theme.config.content?.enable_math ?: false}]]*/ false,
+        lazyload: /*[[${theme.config.content?.lazyload ?: false}]]*/ true,
+        colorScheme: /*[[${theme.config.basic?.color_scheme ?: '0'}]]*/ '0',
+        headerMode: /*[[${theme.config.advanced?.header_mode ?: '1'}]]*/ '1',
+        followSystemColorScheme: /*[[${theme.config.advanced?.follow_system_color_scheme ?: false}]]*/ false,
+        browserLevelLoadingLazy: /*[[${theme.config.advanced?.browser_level_lazyload ?: false}]]*/ false,
+        VOIDPlugin: false,
+        votePath: '',
+        lightBg: '',
+        darkBg: '',
+        lineNumbers: /*[[${theme.config.content?.line_numbers ?: true}]]*/ true,
+        darkModeTime: {
+          start: /*[[${theme.config.advanced?.dark_mode_start ?: 22}]]*/ 22,
+          end: /*[[${theme.config.advanced?.dark_mode_end ?: 7}]]*/ 7
+        },
+        horizontalBg: false,
+        verticalBg: false,
+        indexStyle: /*[[${theme.config.basic?.index_style ?: '0'}]]*/ '0',
+        version: /*[[${theme.spec.version}]]*/ '1.0.0',
+        isDev: false
+      };
+      /*]]>*/
+    </script>
+    <script th:src="@{/assets/js/header.js?v={v}(v=${theme.spec.version})}"></script>
+
+    <th:block th:if="${head != null}">
+      <th:block th:replace="${head}" />
+    </th:block>
+
+    <style th:if="${theme.config.advanced?.desktop_banner_height != null}">
+      @media screen and (min-width: 768px) {
+        main > .lazy-wrap {
+          min-height: [[${theme.config.advanced.desktop_banner_height}]]vh;
+        }
+      }
+    </style>
+    <style th:if="${theme.config.advanced?.mobile_banner_height != null}">
+      @media screen and (max-width: 768px) {
+        main > .lazy-wrap {
+          min-height: [[${theme.config.advanced.mobile_banner_height}]]vh;
+        }
+      }
+    </style>
+
+    <th:block
+      th:if="${theme.config.advanced?.brand_font_src != null and !#strings.isEmpty(theme.config.advanced.brand_font_src)}"
+    >
+      <style th:inline="css">
+        @font-face {
+          font-family: "BrandFont";
+          src: url("[[${theme.config.advanced.brand_font_src}]]");
+        }
+        .brand {
+          font-family: BrandFont, sans-serif;
+          font-style: [[${theme.config.advanced.brand_font_style ?: 'normal'}]] !important;
+          font-weight: [[${theme.config.advanced.brand_font_weight ?: 'normal'}]] !important;
+        }
+      </style>
+    </th:block>
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      th:if="${(theme.config.content?.serif_in_content ?: false)}"
+      id="stylesheet_noto"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC:300,400,700&display=swap&subset=chinese-simplified"
+      rel="stylesheet"
+    />
+    <th:block th:if="${(theme.config.content?.use_fira_code ?: false)}">
+      <link
+        href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap"
+        rel="stylesheet"
+      />
+      <style>
+        .yue code,
+        .yue tt {
+          font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace;
+        }
+      </style>
+    </th:block>
+  </head>
+  <body
+    th:attr="fontsize=${theme.config.content?.default_font_size ?: '3'}"
+    th:class="${(theme.config.basic?.color_scheme == '2' ? 'theme-dark ' : '')
+      + (theme.config.basic?.index_style == '1' ? 'single-col ' : '')
+      + ((theme.config.content?.serif_in_content ?: false) ? 'serif ' : '')
+      + ((theme.config.content?.lazyload ?: false) ? 'lazyload-img ' : '')
+      + ((theme.config.content?.mac_style_code_block ?: false) ? 'macStyleCodeBlock ' : '')
+      + ((theme.config.content?.line_numbers ?: false) ? 'line-numbers ' : '')
+      + ((theme.config.advanced?.blured_lazyload ?: false) ? 'bluredLazyload ' : '')}"
+  >
+    <th:block th:replace="~{partials/header :: header}" />
+    <th:block th:replace="${content}" />
+    <th:block th:replace="~{partials/footer :: footer}" />
+  </body>
+</html>

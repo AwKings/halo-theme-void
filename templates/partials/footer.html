@@ -1,0 +1,184 @@
+<th:block
+  th:fragment="footer"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  th:with="firstPost=${postFinder.list({page:1,size:1,sort:{'spec.publishTime,asc'}})}"
+>
+  <footer>
+    <div class="container wide">
+      <section>
+        <p>
+          © <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}"></span>
+          <span class="brand" th:text="${site.title}"></span>
+        </p>
+        <p>
+          感谢陪伴：<span
+            id="uptime"
+            th:attr="data-buildtime=${firstPost != null and !#lists.isEmpty(firstPost.items) ? #temporals.format(firstPost.items[0].spec.publishTime, 'yyyy-MM-dd''T''HH:mm') : ''}"
+          ></span>
+        </p>
+      </section>
+      <section>
+        <p>
+          Powered by <a href="https://halo.run" target="_blank">Halo</a> •
+          <a href="https://blog.imalan.cn/archives/247/" target="_blank">Theme VOID</a>
+        </p>
+        <p th:if="${theme.config.basic?.footer_text != null}" th:utext="${theme.config.basic.footer_text}"></p>
+      </section>
+    </div>
+  </footer>
+
+  <aside id="ctrler-panel">
+    <div class="ctrler-item" id="go-top">
+      <a
+        target="_self"
+        aria-label="返回顶部"
+        href="javascript:void(0);"
+        style="transform: translateX(-2px)"
+        onclick="VOID_SmoothScroller.scrollTo(0);"
+      >
+        <i class="voidicon-up"></i>
+      </a>
+    </div>
+
+    <div class="ctrler-item hidden-xs" sec:authorize="isAuthenticated()">
+      <a
+        target="_blank"
+        aria-label="进入后台"
+        th:href="@{/console}"
+        style="transform: translateX(-2px)"
+      >
+        <i class="voidicon-login"></i>
+      </a>
+    </div>
+
+    <div aria-label="展开或关闭设置面板" id="toggle-setting-pc" class="ctrler-item hidden-xs">
+      <a
+        target="_self"
+        href="javascript:void(0);"
+        style="transform: translateX(-2px)"
+        onclick="VOID_Ui.toggleSettingPanel();"
+      >
+        <i class="voidicon-cog"></i>
+      </a>
+    </div>
+    <div aria-label="展开或关闭文章目录" class="ctrler-item" id="toggle-toc">
+      <a
+        target="_self"
+        href="javascript:void(0);"
+        style="margin-left: -2px"
+        onclick="TOC.toggle()"
+      >
+        <i class="voidicon-left"></i>
+      </a>
+    </div>
+  </aside>
+
+  <aside hidden id="setting-panel">
+    <section>
+      <div id="toggle-night">
+        <a
+          target="_self"
+          href="javascript:void(0)"
+          onclick="VOID_Ui.DarkModeSwitcher.toggleByHand();"
+        >
+          <i></i>
+        </a>
+      </div>
+      <div id="adjust-text-container">
+        <div class="adjust-text-item">
+          <a target="_self" href="javascript:void(0)" onclick="VOID_Ui.adjustTextsize(false);">
+            <i class="voidicon-font"></i>-
+          </a>
+          <span id="current_textsize"></span>
+          <a target="_self" href="javascript:void(0)" onclick="VOID_Ui.adjustTextsize(true);">
+            <i class="voidicon-font"></i>+
+          </a>
+        </div>
+        <div class="adjust-text-item">
+          <a
+            target="_self"
+            th:class="${'font-indicator' + (!(theme.config.content?.serif_in_content ?: false) ? ' checked' : '')}"
+            href="javascript:void(0)"
+            onclick="VOID_Ui.toggleSerif(this, false);"
+            >Sans</a
+          >
+          <a
+            target="_self"
+            th:class="${'font-indicator' + ((theme.config.content?.serif_in_content ?: false) ? ' checked' : '')}"
+            href="javascript:void(0)"
+            onclick="VOID_Ui.toggleSerif(this, true);"
+            >Serif</a
+          >
+        </div>
+      </div>
+    </section>
+    <section id="links">
+      <a class="link" title="RSS" target="_blank" th:href="@{/rss.xml}">
+        <i class="voidicon-rss"></i>
+      </a>
+      <th:block th:each="link : ${theme.config.advanced?.social_links}">
+        <a
+          class="link"
+          th:title="${link.name}"
+          th:target="${link.target ?: '_blank'}"
+          th:href="${link.href}"
+        >
+          <i th:class="|voidicon-${link.icon ?: 'link'}|"></i>
+        </a>
+      </th:block>
+    </section>
+    <section id="login-panel">
+      <div class="buttons" id="manage-buttons" sec:authorize="isAuthenticated()">
+        <a class="btn btn-normal" no-pjax target="_blank" th:href="@{/console}">后台</a>
+        <a class="btn btn-normal" no-pjax title="登出" th:href="@{/logout}">登出</a>
+      </div>
+      <div class="buttons" id="manage-buttons" sec:authorize="isAnonymous()">
+        <a class="btn btn-normal" target="_self" th:href="@{/login}">登录</a>
+      </div>
+    </section>
+  </aside>
+
+  <th:block th:if="${theme.config.advanced?.service_worker != null and !#strings.isEmpty(theme.config.advanced.service_worker)}">
+    <script th:inline="javascript">
+      var serviceWorkerUri = /*[[@{/${theme.config.advanced.service_worker}}]]*/ '/VOIDCacheRule.js';
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register(serviceWorkerUri).catch(function (error) {
+          console.log('ERROR: ' + error);
+        });
+      }
+    </script>
+  </th:block>
+  <th:block th:unless="${theme.config.advanced?.service_worker != null and !#strings.isEmpty(theme.config.advanced.service_worker)}">
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .getRegistrations()
+          .then(function (registrations) {
+            for (let registration of registrations) {
+              registration.unregister();
+            }
+          })
+          .catch(function (err) {
+            console.log('Service Worker registration failed: ', err);
+          });
+      }
+    </script>
+  </th:block>
+
+  <script>
+    (function () {
+      var el = document.getElementById('uptime');
+      if (el && el.getAttribute('data-buildtime')) {
+        VOIDConfig.buildTime = el.getAttribute('data-buildtime');
+      } else {
+        VOIDConfig.buildTime = new Date().toISOString().slice(0, 16);
+      }
+    })();
+  </script>
+  <script th:src="@{/assets/js/bundle.js?v={v}(v=${theme.spec.version})}"></script>
+  <th:block th:if="${(theme.config.content?.enable_math ?: false)}">
+    <script th:src="@{/assets/libs/mathjax/2.7.4/MathJax.js}"></script>
+  </th:block>
+  <script th:src="@{/assets/js/VOID.js?v={v}(v=${theme.spec.version})}"></script>
+  <halo:footer />
+</th:block>

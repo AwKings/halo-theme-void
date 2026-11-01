@@ -1,0 +1,275 @@
+<!doctype html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  th:replace="~{partials/layout :: html(title = ${post.spec.title + ' - ' + site.title}, head = ~{::head}, content = ~{::content})}"
+>
+  <th:block th:fragment="head">
+    <th:block th:if="${(theme.config.seo?.enable_metadata ?: false)}">
+      <link rel="canonical" th:href="@{${site.url + post.status.permalink}}" />
+      <meta property="og:type" content="article" />
+      <meta property="og:title" th:content="${post.spec.title}" />
+      <meta property="og:site_name" th:content="${site.title}" />
+      <meta property="og:url" th:content="${site.url + post.status.permalink}" />
+      <meta property="og:description" th:content="${post.status.excerpt}" />
+      <meta
+        th:if="${#annotations.getOrDefault(post, 'void_banner', post.spec.cover ?: '') != ''}"
+        property="og:image"
+        th:content="${#annotations.getOrDefault(post, 'void_banner', post.spec.cover ?: '')}"
+      />
+      <meta property="article:published_time" th:content="${post.spec.publishTime}" />
+      <meta property="article:modified_time" th:content="${post.status.lastModifyTime}" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" th:content="${post.spec.title}" />
+      <meta name="twitter:description" th:content="${post.status.excerpt}" />
+      <meta
+        th:if="${theme.config.content?.twitter_id != null and !#strings.isEmpty(theme.config.content.twitter_id)}"
+        name="twitter:site"
+        th:content="${'@' + theme.config.content.twitter_id}"
+      />
+    </th:block>
+    <th:block th:if="${(theme.config.seo?.enable_structured_data ?: false)}">
+      <script type="application/ld+json" th:inline="javascript">
+        {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          "headline": /*[[${post.spec.title}]]*/ '',
+          "url": /*[[${site.url + post.status.permalink}]]*/ '',
+          "datePublished": /*[[${post.spec.publishTime}]]*/ '',
+          "dateModified": /*[[${post.status.lastModifyTime}]]*/ '',
+          "author": {
+            "@type": "Person",
+            "name": /*[[${post.owner != null ? post.owner.displayName : site.title}]]*/ '',
+            "url": /*[[${post.owner != null ? site.url + post.owner.permalink : site.url}]]*/ ''
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": /*[[${site.title}]]*/ ''
+          },
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": /*[[${site.url + post.status.permalink}]]*/ ''
+          }
+        }
+      </script>
+    </th:block>
+  </th:block>
+
+  <th:block th:fragment="content">
+    <th:block
+      th:with="
+        bannerStyle=${#annotations.getOrDefault(post, 'void_banner_style', '0')},
+        rawBanner=${#annotations.getOrDefault(post, 'void_banner', post.spec.cover ?: '')},
+        banner=${bannerStyle == '2' ? '' : rawBanner},
+        showTOC=${#annotations.getOrDefault(post, 'void_show_toc', '1') == '1'}
+      "
+    >
+      <main id="pjax-container">
+        <div
+          th:class="${'lazy-wrap' + (#strings.isEmpty(banner) ? ' no-banner' : ' loading dark')}"
+        >
+          <div id="banner" th:if="${!#strings.isEmpty(banner)}" th:classappend="${bannerStyle == '1'} ? ' blur' : ''">
+            <img
+              th:if="${(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload browserlevel-lazy"
+              th:src="${banner}"
+              loading="lazy"
+              alt=""
+            />
+            <img
+              th:if="${!(theme.config.advanced?.browser_level_lazyload ?: false)}"
+              class="lazyload"
+              th:attr="data-src=${banner}"
+              alt=""
+            />
+          </div>
+          <script th:if="${!#strings.isEmpty(banner)}">
+            $('body>header').removeClass('force-dark').removeClass('no-banner');
+          </script>
+          <script th:if="${#strings.isEmpty(banner)}">
+            $('body>header').addClass('force-dark').addClass('no-banner');
+          </script>
+
+          <div class="banner-title">
+            <h1 class="post-title" th:text="${post.spec.title}"></h1>
+            <p class="post-meta">
+              <span th:if="${post.owner != null}">
+                <a th:href="@{${site.url + post.owner.permalink}}" th:text="${post.owner.displayName}"></a>
+              </span>
+              &nbsp;•&nbsp;
+              <time
+                th:datetime="${post.spec.publishTime}"
+                th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+              ></time>
+              &nbsp;•&nbsp;<a
+                no-pjax
+                target="_self"
+                href="javascript:void(0);"
+                onclick="VOID_SmoothScroller.scrollTo('#comments', -60)"
+                th:text="${(post.stats?.comment ?: 0) + ' 评论'}"
+              ></a>
+              &nbsp;•&nbsp;<span th:text="${post.stats.visit + ' 阅读'}"></span>
+              &nbsp;•&nbsp;<span id="post-word-count"></span>
+              <th:block sec:authorize="hasRole('super-role')">
+                &nbsp;•&nbsp;<a
+                  target="_blank"
+                  th:href="@{/console/posts/editor?name=${post.metadata.name}}"
+                  >编辑</a
+                >
+              </th:block>
+            </p>
+          </div>
+        </div>
+
+        <div class="wrapper container">
+          <div class="contents-wrap">
+            <section id="post" class="float-up">
+              <p
+                class="notice"
+                th:if="${post.spec.publishTime != null}"
+                th:attr="data-published=${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd''T''HH:mm:ss')},data-updated=${post.status.lastModifyTime != null ? #temporals.format(post.status.lastModifyTime, 'yyyy-MM-dd''T''HH:mm:ss') : ''}"
+                style="display: none"
+              ></p>
+
+              <article class="post yue">
+                <div class="articleBody full" th:utext="${post.content.content}"></div>
+
+                <section class="tags" th:if="${post.tags != null and !#lists.isEmpty(post.tags)}">
+                  <a
+                    th:each="tag : ${post.tags}"
+                    rel="tag"
+                    class="tag-item"
+                    th:href="@{${tag.status.permalink}}"
+                    th:text="${tag.spec.displayName}"
+                  ></a>
+                </section>
+
+                <div
+                  class="social-button"
+                  th:attr="
+                    data-url=${site.url + post.status.permalink},
+                    data-title=${post.spec.title},
+                    data-excerpt=${post.status.excerpt},
+                    data-img=${#annotations.getOrDefault(post, 'void_banner', post.spec.cover ?: '')},
+                    data-twitter=${#strings.isEmpty(theme.config.content?.twitter_id ?: '') ? (post.owner != null ? post.owner.displayName : site.title) : theme.config.content.twitter_id},
+                    data-weibo=${#strings.isEmpty(theme.config.content?.weibo_id ?: '') ? (post.owner != null ? post.owner.displayName : site.title) : theme.config.content.weibo_id}"
+                >
+                  <th:block th:if="${theme.config.basic?.reward != null and !#strings.isEmpty(theme.config.basic.reward)}">
+                    <a
+                      data-fancybox="gallery-reward"
+                      role="button"
+                      aria-label="赞赏"
+                      th:attr="data-src='#reward'"
+                      href="javascript:;"
+                      class="btn btn-normal btn-highlight"
+                      >赏杯咖啡</a
+                    >
+                    <div hidden id="reward">
+                      <img th:src="${theme.config.basic.reward}" alt="打赏二维码" />
+                    </div>
+                  </th:block>
+                  <a
+                    role="button"
+                    aria-label="为文章点赞"
+                    id="social"
+                    href="javascript:void(0);"
+                    onclick="VOID_Vote.vote(this);"
+                    th:if="${theme.config.basic?.show_upvote ?: true}"
+                    th:attr="data-item-id=${post.metadata.name}"
+                    data-type="up"
+                    data-table="content"
+                    class="btn btn-normal post-like vote-button"
+                    >ENJOY
+                    <span class="value" th:text="${post.stats?.upvote ?: 0}">0</span></a
+                  >
+                  <a
+                    aria-label="分享到微博"
+                    href="javascript:void(0);"
+                    onclick="Share.toWeibo(this);"
+                    class="social-button-icon"
+                    ><i class="voidicon-weibo"></i
+                  ></a>
+                  <a
+                    aria-label="分享到Twitter"
+                    href="javascript:void(0);"
+                    onclick="Share.toTwitter(this);"
+                    class="social-button-icon"
+                    ><i class="voidicon-twitter"></i
+                  ></a>
+                </div>
+              </article>
+
+              <script>
+                (function () {
+                  var notice = document.querySelector('#post > p.notice');
+                  if (!notice) return;
+                  var published = new Date(notice.getAttribute('data-published'));
+                  var updated = new Date(notice.getAttribute('data-updated') || notice.getAttribute('data-published'));
+                  var days = Math.round((Date.now() - published.getTime()) / 86400000);
+                  var updateDays = Math.round((Date.now() - updated.getTime()) / 86400000);
+                  if (days > 90) {
+                    notice.textContent =
+                      '请注意，本文编写于 ' + days + ' 天前，最后修改于 ' + updateDays + ' 天前，其中某些信息可能已经过时。';
+                    notice.style.display = 'block';
+                  }
+                })();
+                (function () {
+                  $('iframe').each(function (i, item) {
+                    var src = $(item).attr('src');
+                    if (typeof src === 'string' && src.indexOf('player.bilibili.com') > -1) {
+                      $(item).wrap('<div class="bili-player"></div>');
+                    }
+                  });
+                })();
+              </script>
+
+              <div class="post-pager" th:with="cursor = ${postFinder.cursor(post.metadata.name)}">
+                <div class="prev">
+                  <th:block th:if="${cursor.hasPrevious()}">
+                    <a th:href="@{${cursor.previous.status.permalink}}">
+                      <h2 th:text="${cursor.previous.spec.title}"></h2>
+                    </a>
+                    <p th:if="${!#strings.isEmpty(cursor.previous.status.excerpt)}" th:utext="${cursor.previous.status.excerpt}"></p>
+                  </th:block>
+                  <h2 th:unless="${cursor.hasPrevious()}">没有了</h2>
+                </div>
+                <div class="next">
+                  <th:block th:if="${cursor.hasNext()}">
+                    <a th:href="@{${cursor.next.status.permalink}}">
+                      <h2 th:text="${cursor.next.spec.title}"></h2>
+                    </a>
+                    <p th:if="${!#strings.isEmpty(cursor.next.status.excerpt)}" th:utext="${cursor.next.status.excerpt}"></p>
+                  </th:block>
+                  <h2 th:unless="${cursor.hasNext()}">没有了</h2>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <th:block th:if="${showTOC}">
+            <div class="toc-mask" onclick="TOC.close();"></div>
+            <div aria-label="文章目录" class="TOC"></div>
+            <style>
+              #toggle-toc {
+                display: block;
+              }
+            </style>
+          </th:block>
+        </div>
+
+        <div class="comments-container float-up">
+          <section id="comments" class="container">
+            <p
+              class="comment-notification notice"
+              th:if="${theme.config.content?.comment_notification != null and !#strings.isEmpty(theme.config.content.comment_notification)}"
+              th:text="${theme.config.content.comment_notification}"
+            ></p>
+            <th:block th:if="${haloCommentEnabled}">
+              <halo:comment group="content.halo.run" kind="Post" th:attr="name=${post.metadata.name}" />
+            </th:block>
+          </section>
+        </div>
+      </main>
+    </th:block>
+  </th:block>
+</html>

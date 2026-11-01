@@ -1,0 +1,33 @@
+apiVersion: theme.halo.run/v1alpha1
+kind: Theme
+metadata:
+  name: theme-void
+spec:
+  displayName: VOID
+  author:
+    name: awking
+  description: >-
+    VOID（无类型）主题的 Halo 移植版，移植者 awking。原主题为 Typecho 主题
+    Typecho-Theme-VOID（原作者：熊猫小A，https://blog.imalan.cn），采用双栏瀑布流首页、沉浸式头图与极简排版。
+  logo: ""
+  homepage: http://163.192.199.131:8090/archives/halo-theme-void
+  repo: https://github.com/AwKings/halo-theme-void
+  issues: https://github.com/AwKings/halo-theme-void/issues
+  settingName: "theme-void-setting"
+  configMapName: "theme-void-configmap"
+  customTemplates:
+    post:
+      - name: Landscape
+        description: 巨大文字、巨幅图片的沉浸式文章排版
+        screenshot: ""
+        file: post_landscape.html
+    page:
+      - name: 归档
+        description: 按年份展示全站文章，附标签云
+        screenshot: ""
+        file: page_archives.html
+  version: 1.0.5
+  requires: ">=2.20.0"
+  license:
+    - name: "MIT"
+      url: "https://github.com/AwKings/halo-theme-void/blob/main/LICENSE"

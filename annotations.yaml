@@ -1,0 +1,95 @@
+apiVersion: v1alpha1
+kind: AnnotationSetting
+metadata:
+  name: theme-void-post-annotation
+spec:
+  targetRef:
+    group: content.halo.run
+    kind: Post
+  formSchema:
+    - $formkit: textarea
+      name: void_excerpt
+      label: 自定义摘要
+      rows: 3
+      help: "留空则自动从文章截取。"
+    - $formkit: text
+      name: void_banner
+      label: 文章主图
+      help: "图片地址，用于文章页头图与首页卡片。留空则使用文章封面。"
+    - $formkit: select
+      name: void_banner_style
+      label: 文章主图样式
+      value: "0"
+      options:
+        - label: 显示在顶部
+          value: "0"
+        - label: 显示在顶部并添加模糊效果
+          value: "1"
+        - label: 不显示
+          value: "2"
+    - $formkit: select
+      name: void_banner_as_cover
+      label: 首页主图样式
+      value: "1"
+      options:
+        - label: 主图显示在标题上方
+          value: "1"
+        - label: 主图作为标题背景
+          value: "2"
+        - label: 不显示
+          value: "0"
+      help: "作为标题背景时会添加暗色遮罩，建议仅对暗色主图使用。"
+    - $formkit: select
+      name: void_post_type
+      label: 文章类型
+      value: "0"
+      options:
+        - label: 一般文章
+          value: "0"
+        - label: Landscape（巨幅图片排版）
+          value: "1"
+    - $formkit: select
+      name: void_show_full_content
+      label: 在首页显示完整内容
+      value: "0"
+      options:
+        - label: "否"
+          value: "0"
+        - label: "是"
+          value: "1"
+      help: "适合比较短的文章。"
+    - $formkit: select
+      name: void_show_toc
+      label: 文章目录
+      value: "1"
+      options:
+        - label: 显示目录
+          value: "1"
+        - label: 不显示目录
+          value: "0"
+
+---
+apiVersion: v1alpha1
+kind: AnnotationSetting
+metadata:
+  name: theme-void-singlepage-annotation
+spec:
+  targetRef:
+    group: content.halo.run
+    kind: SinglePage
+  formSchema:
+    - $formkit: text
+      name: void_banner
+      label: 页面主图
+      help: "图片地址，留空则使用页面封面。"
+    - $formkit: select
+      name: void_banner_style
+      label: 页面主图样式
+      value: "0"
+      options:
+        - label: 显示在顶部
+          value: "0"
+        - label: 显示在顶部并添加模糊效果
+          value: "1"
+        - label: 不显示
+          value: "2"

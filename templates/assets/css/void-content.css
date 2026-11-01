@@ -68,9 +68,38 @@ article .articleBody .photos figure:hover figcaption {
     opacity: 1;
 }
 
+/* ---------- 已探测到宽高：按原始比例做 justified 排版 ---------- */
+/* 插件在 figure 上内联给出 --ar（宽高比）与 flex-grow，
+   基准宽度在这里按断点换算，a 的 padding-top 撑出比例盒，
+   图片绝对定位填满，行内自然等高、两端对齐。 */
+article .articleBody .photos figure.size-parsed {
+    flex: 1 1 calc(var(--ar, 1.5) * 200px);
+    min-width: 0;
+}
+
+article .articleBody .photos figure.size-parsed > a.void-img {
+    position: relative;
+    display: block;
+    height: auto;
+    overflow: hidden;
+}
+
+article .articleBody .photos figure.size-parsed > a.void-img img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 @media screen and (max-width: 767px) {
     article .articleBody .photos figure {
         flex: 1 1 calc(50% - 5px);
+    }
+
+    /* 窄屏把基准宽度调小，一行能放两三张 */
+    article .articleBody .photos figure.size-parsed {
+        flex: 1 1 calc(var(--ar, 1.5) * 120px);
     }
 
     article .articleBody .photos figure > a.void-img {

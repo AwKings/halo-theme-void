@@ -40,15 +40,6 @@ spec:
           value: "0"
       help: "作为标题背景时会添加暗色遮罩，建议仅对暗色主图使用。"
     - $formkit: select
-      name: void_post_type
-      label: 文章类型
-      value: "0"
-      options:
-        - label: 一般文章
-          value: "0"
-        - label: Landscape（巨幅图片排版）
-          value: "1"
-    - $formkit: select
       name: void_show_full_content
       label: 在首页显示完整内容
       value: "0"

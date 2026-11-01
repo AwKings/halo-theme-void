@@ -100,14 +100,17 @@ spec:
           name: use_fira_code
           label: 代码使用 Fira Code 字体
           value: false
+          help: "从 Google Fonts 加载 Fira Code。若启用了 shiki 插件的「主题侧渲染」，字体仍会生效。"
         - $formkit: checkbox
           name: mac_style_code_block
           label: Mac 风格代码块
           value: true
+          help: "代码块顶部加 Mac 窗口样式的圆点与标题栏。shiki 插件接管代码块时只能显示简化版。"
         - $formkit: checkbox
           name: line_numbers
           label: 代码块行号
           value: true
+          help: "由主题的 Prism 插件生成行号。若启用了 shiki 插件的「主题侧渲染」，代码块会由该插件渲染，行号不生效——请在该插件设置中关闭「启用主题侧渲染」。"
         - $formkit: checkbox
           name: parse_figcaption
           label: 显示图片题注

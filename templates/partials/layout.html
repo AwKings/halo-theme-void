@@ -107,18 +107,11 @@
       href="https://fonts.googleapis.com/css?family=Noto+Serif+SC:300,400,700&display=swap&subset=chinese-simplified"
       rel="stylesheet"
     />
-    <th:block th:if="${(theme.config.content?.use_fira_code ?: false)}">
-      <link
-        href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap"
-        rel="stylesheet"
-      />
-      <style>
-        .yue code,
-        .yue tt {
-          font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace;
-        }
-      </style>
-    </th:block>
+    <link
+      th:if="${(theme.config.content?.use_fira_code ?: false)}"
+      href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body
     th:attr="fontsize=${theme.config.content?.default_font_size ?: '3'}"
@@ -128,6 +121,7 @@
       + ((theme.config.content?.lazyload ?: false) ? 'lazyload-img ' : '')
       + ((theme.config.content?.mac_style_code_block ?: false) ? 'macStyleCodeBlock ' : '')
       + ((theme.config.content?.line_numbers ?: false) ? 'line-numbers ' : '')
+      + ((theme.config.content?.use_fira_code ?: false) ? 'firaCode ' : '')
       + ((theme.config.advanced?.blured_lazyload ?: false) ? 'bluredLazyload ' : '')}"
   >
     <th:block th:replace="~{partials/header :: header}" />

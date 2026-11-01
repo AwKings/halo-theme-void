@@ -107,6 +107,58 @@ article .articleBody .photos figure.size-parsed > a.void-img img {
     }
 }
 
+/* ---------- 代码块：Fira Code / 行号 / shiki 兜底 ---------- */
+
+/* Fira Code 由 body.firaCode 驱动；写成 CSS 而非内联 <style>，
+   这样也能覆盖到 shiki 插件生成的 <shiki-code>（font-family 会继承进 shadow DOM）。 */
+body.firaCode .yue code,
+body.firaCode .yue tt,
+body.firaCode .yue pre,
+body.firaCode .yue kbd,
+body.firaCode .yue samp,
+body.firaCode .yue shiki-code {
+    font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-variant-ligatures: contextual;
+}
+
+/* 没有 language-* 类的代码块（富文本编辑器常见），Prism 只会加 .line-numbers，
+   而 prism 主题的定位规则绑在 pre[class*=language-] 上，这里补齐。 */
+.yue pre.line-numbers {
+    position: relative;
+    counter-reset: linenumber;
+}
+
+.yue pre.line-numbers > code {
+    padding-left: calc(3em + 10px);
+}
+
+/* shiki 插件（shadow DOM）接管时的兜底：
+   伪元素在 shadow host 上不渲染，所以用背景层画出 Mac 顶栏与三个圆点。 */
+body.macStyleCodeBlock .yue shiki-code {
+    display: block;
+    position: relative;
+    padding-top: 32px;
+    border-radius: 5px;
+    background-color: #f1f3f3;
+    background-image:
+        linear-gradient(#ebeded, #ebeded),
+        radial-gradient(circle, #fc625d 5.5px, transparent 6px),
+        radial-gradient(circle, #fdbc40 5.5px, transparent 6px),
+        radial-gradient(circle, #35cd4b 5.5px, transparent 6px);
+    background-repeat: no-repeat;
+    background-size: 100% 32px, 12px 12px, 12px 12px, 12px 12px;
+    background-position: 0 0, 12px 10px, 32px 10px, 52px 10px;
+}
+
+body.theme-dark.macStyleCodeBlock .yue shiki-code {
+    background-color: #111;
+    background-image:
+        linear-gradient(#21252b, #21252b),
+        radial-gradient(circle, #fc625d 5.5px, transparent 6px),
+        radial-gradient(circle, #fdbc40 5.5px, transparent 6px),
+        radial-gradient(circle, #35cd4b 5.5px, transparent 6px);
+}
+
 /* ---------- 注音 ---------- */
 article .articleBody ruby rt {
     font-size: 0.55em;

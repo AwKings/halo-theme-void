@@ -44,7 +44,7 @@
             <p class="headline content" th:if="${!#strings.isEmpty(customExcerpt)}" th:text="${customExcerpt}"></p>
             <div class="articleBody">
               <p th:if="${!#strings.isEmpty(customExcerpt)}"></p>
-              <p th:if="${#strings.isEmpty(customExcerpt) and !fullContent}" th:utext="${post.status.excerpt}"></p>
+              <p th:if="${#strings.isEmpty(customExcerpt) and !fullContent}" th:text="${post.status.excerpt}"></p>
               <th:block th:if="${fullContent}">
                 <div th:utext="${postFinder.content(post.metadata.name).content}"></div>
               </th:block>

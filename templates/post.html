@@ -183,18 +183,44 @@
                     <span class="value" th:text="${post.stats?.upvote ?: 0}">0</span></a
                   >
                   <a
-                    aria-label="分享到微博"
+                    aria-label="分享到 X"
+                    title="分享到 X"
                     href="javascript:void(0);"
-                    onclick="Share.toWeibo(this);"
+                    onclick="Share.share(this, 'x'); return false;"
+                    class="social-button-icon"
+                    ><i class="voidicon-twitter"></i
+                  ></a>
+                  <a
+                    aria-label="分享到微博"
+                    title="分享到微博"
+                    href="javascript:void(0);"
+                    onclick="Share.share(this, 'weibo'); return false;"
                     class="social-button-icon"
                     ><i class="voidicon-weibo"></i
                   ></a>
                   <a
-                    aria-label="分享到Twitter"
+                    aria-label="分享到 QQ"
+                    title="分享到 QQ"
                     href="javascript:void(0);"
-                    onclick="Share.toTwitter(this);"
+                    onclick="Share.share(this, 'qq'); return false;"
                     class="social-button-icon"
-                    ><i class="voidicon-twitter"></i
+                    ><i class="voidicon-qq"></i
+                  ></a>
+                  <a
+                    aria-label="微信扫码分享"
+                    title="微信扫码分享"
+                    href="javascript:void(0);"
+                    onclick="Share.share(this, 'wechat'); return false;"
+                    class="social-button-icon"
+                    ><i class="voidicon-wechat"></i
+                  ></a>
+                  <a
+                    aria-label="复制链接"
+                    title="复制链接"
+                    href="javascript:void(0);"
+                    onclick="Share.share(this, 'copy'); return false;"
+                    class="social-button-icon"
+                    ><i class="voidicon-link"></i
                   ></a>
                 </div>
               </article>

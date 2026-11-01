@@ -114,7 +114,8 @@ spec:
           value: true
         - $formkit: text
           name: twitter_id
-          label: Twitter ID
+          label: X（Twitter）用户名
+          help: "分享到 X 时 @ 的账号，不用带 @。留空则用文章作者名。"
           value: ""
         - $formkit: text
           name: weibo_id

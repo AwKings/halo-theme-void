@@ -432,31 +432,191 @@ var VOID_Vote = {
 
 var Share = {
     parseItem: function (item) {
-        item = $(item).parent();
+        var wrap = $(item).parent();
         return {
-            url: $(item).attr('data-url'),
-            title: $(item).attr('data-title'),
-            excerpt: $(item).attr('data-excerpt'),
-            img: $(item).attr('data-img'),
-            twitter: $(item).attr('data-twitter'),
-            weibo: $(item).attr('data-weibo'),
+            url: wrap.attr('data-url') || location.href,
+            title: wrap.attr('data-title') || document.title,
+            excerpt: wrap.attr('data-excerpt') || '',
+            img: wrap.attr('data-img') || '',
+            twitter: wrap.attr('data-twitter') || '',
+            weibo: wrap.attr('data-weibo') || '',
         };
     },
 
-    toWeibo: function (item) {
-        var content = Share.parseItem(item);
-        var url = 'http://service.weibo.com/share/share.php?appkey=&title=分享《'+ content.title + '》 @' + content.weibo + '%0a%0a' + content.excerpt
-            +'&url='+content.url
-            +'&pic='+content.img+'&searchPic=false&style=simple';
-        window.open(url);
+    // 居中弹窗，避免整页跳走
+    popup: function (url) {
+        var w = 640, h = 560;
+        var left = (screen.width - w) / 2;
+        var top = (screen.height - h) / 2;
+        var win = window.open(url, 'void-share',
+            'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top +
+            ',toolbar=no,menubar=no,scrollbars=yes,resizable=yes');
+        if (win && win.focus) win.focus();
+        return win;
     },
 
-    toTwitter: function (item) {
+    share: function (item, type) {
         var content = Share.parseItem(item);
-        var url = 'https://twitter.com/intent/tweet?text=分享《'+ content.title + '》 @' + content.twitter + '%0a%0a' + content.excerpt
-            + '%20' + content.url;
-        window.open(url);
-    }
+        var url = encodeURIComponent(content.url);
+        var title = content.title;
+        var text = '分享《' + title + '》' + (content.excerpt ? '\n\n' + content.excerpt : '');
+
+        if (type === 'wechat') {
+            Share.qrcode(content.url, title);
+            return;
+        }
+        if (type === 'copy') {
+            Share.copy(content.url);
+            return;
+        }
+
+        var links = {
+            // X（原 Twitter）：x.com/intent/post，text 里带 @ 账号
+            x: 'https://x.com/intent/post?text=' +
+                encodeURIComponent(text + (content.twitter ? ' @' + content.twitter : '')) +
+                '&url=' + url,
+            weibo: 'https://service.weibo.com/share/share.php?title=' +
+                encodeURIComponent(text + (content.weibo ? ' @' + content.weibo : '')) +
+                '&url=' + url +
+                (content.img ? '&pic=' + encodeURIComponent(content.img) : '') +
+                '&searchPic=false&style=simple',
+            qq: 'https://connect.qq.com/widget/shareqq/index.html?url=' + url +
+                '&title=' + encodeURIComponent(title) +
+                '&summary=' + encodeURIComponent(content.excerpt || '') +
+                '&source=' + encodeURIComponent(document.title) +
+                (content.img ? '&pics=' + encodeURIComponent(content.img) : ''),
+        };
+
+        if (links[type]) Share.popup(links[type]);
+    },
+
+    // 微信没有网页分享接口，用二维码
+    qrcode: function (url, title) {
+        Share.style();
+        Share.ensureQR(function (ok) {
+            var mask = document.createElement('div');
+            mask.className = 'void-qr-mask';
+
+            var box = document.createElement('div');
+            box.className = 'void-qr-box';
+            box.setAttribute('role', 'dialog');
+            box.setAttribute('aria-label', '微信扫码分享');
+
+            var heading = document.createElement('div');
+            heading.className = 'void-qr-title';
+            heading.textContent = title;
+            box.appendChild(heading);
+
+            var holder = document.createElement('div');
+            holder.className = 'void-qr-code';
+            box.appendChild(holder);
+
+            if (ok && window.QRCode) {
+                new QRCode(holder, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    correctLevel: QRCode.CorrectLevel.M,
+                });
+            } else {
+                var fallback = document.createElement('p');
+                fallback.className = 'void-qr-fallback';
+                fallback.textContent = '二维码生成失败，请直接复制链接：' + url;
+                holder.appendChild(fallback);
+            }
+
+            var tip = document.createElement('p');
+            tip.className = 'void-qr-tip';
+            tip.textContent = ok ? '打开微信「扫一扫」，扫描上方二维码' : '';
+            if (ok) box.appendChild(tip);
+
+            var close = document.createElement('button');
+            close.type = 'button';
+            close.className = 'void-qr-close';
+            close.setAttribute('aria-label', '关闭');
+            close.innerHTML = '&times;';
+            box.appendChild(close);
+
+            mask.appendChild(box);
+            document.body.appendChild(mask);
+
+            function hide() {
+                if (mask.parentNode) mask.parentNode.removeChild(mask);
+                document.removeEventListener('keydown', onKey);
+            }
+            function onKey(e) {
+                if (e.key === 'Escape' || e.keyCode === 27) hide();
+            }
+            close.addEventListener('click', hide);
+            mask.addEventListener('click', function (e) {
+                if (e.target === mask) hide();
+            });
+            document.addEventListener('keydown', onKey);
+        });
+    },
+
+    // 首次点微信时才加载二维码库
+    ensureQR: function (callback) {
+        if (window.QRCode) {
+            callback(true);
+            return;
+        }
+        var current = document.querySelector('script[src*="VOID.js"]');
+        var base = current ? current.src.replace(/VOID\.js.*$/, '') : '/themes/theme-void/assets/js/';
+        var script = document.createElement('script');
+        script.src = base + 'qrcode.min.js';
+        script.onload = function () { callback(!!window.QRCode); };
+        script.onerror = function () { callback(false); };
+        document.head.appendChild(script);
+    },
+
+    copy: function (url) {
+        function done() { VOID.alert('链接已复制'); }
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(url).then(done, function () {
+                Share.fallbackCopy(url, done);
+            });
+        } else {
+            Share.fallbackCopy(url, done);
+        }
+    },
+
+    fallbackCopy: function (text, done) {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.top = '-9999px';
+        document.body.appendChild(area);
+        area.select();
+        try {
+            document.execCommand('copy');
+            done();
+        } catch (e) {
+            VOID.alert('复制失败，请手动复制：' + text);
+        }
+        document.body.removeChild(area);
+    },
+
+    style: function () {
+        if (document.getElementById('void-qr-style')) return;
+        var css = [
+            '.void-qr-mask{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}',
+            '.void-qr-box{position:relative;background:#fff;border-radius:6px;padding:24px 24px 14px;text-align:center;width:100%;max-width:320px;box-shadow:0 10px 40px rgba(0,0,0,.25)}',
+            '.theme-dark .void-qr-box{background:#1f1f1f;color:#ddd}',
+            '.void-qr-title{font-size:.95rem;font-weight:700;line-height:1.5;margin-bottom:14px;word-break:break-word}',
+            '.void-qr-code{display:flex;justify-content:center;align-items:center;min-height:200px;background:#fff;padding:6px;border-radius:4px}',
+            '.void-qr-code img,.void-qr-code canvas{display:block;max-width:100%}',
+            '.void-qr-tip{font-size:.8rem;color:#888;margin:12px 0 0}',
+            '.void-qr-fallback{font-size:.75rem;color:#666;word-break:break-all;padding:10px;margin:0}',
+            '.void-qr-close{position:absolute;top:4px;right:8px;border:none;background:none;font-size:1.5rem;line-height:1;cursor:pointer;color:#999;padding:0}',
+            '.void-qr-close:hover{color:#333}',
+        ].join('');
+        var style = document.createElement('style');
+        style.id = 'void-qr-style';
+        style.textContent = css;
+        document.head.appendChild(style);
+    },
 };
 
 var AjaxComment = {

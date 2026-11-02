@@ -15,7 +15,6 @@
         <span></span>
       </a>
       <a class="brand" th:href="@{/}" th:text="${theme.config.basic?.brand_name ?: site.title}">VOID</a>
-      <a th:href="@{/}">首页</a>
 
       <th:block th:with="menu=${menuFinder.getPrimary()}">
         <th:block th:if="${menu != null}">
@@ -24,7 +23,7 @@
               class="dropdown"
               th:if="${item.children != null and !#lists.isEmpty(item.children)}"
             >
-              <a th:href="@{${item.status.href}}" th:text="${item.status.displayName}"></a>
+              <span class="dropdown-label" th:text="${item.status.displayName}"></span>
               <ul>
                 <li th:each="child : ${item.children}">
                   <a
@@ -45,18 +44,9 @@
         </th:block>
       </th:block>
 
-      <span class="dropdown">
-        分类
-        <ul>
-          <li th:each="cat : ${categoryFinder.listAll()}">
-            <a th:href="@{${cat.status.permalink}}" th:text="${cat.spec.displayName}"></a>
-          </li>
-        </ul>
-      </span>
-
       <th:block th:with="moreLinks=${theme.config.advanced?.more_menu}">
         <span class="dropdown" th:if="${moreLinks != null and !#lists.isEmpty(moreLinks)}">
-          更多
+          <span class="dropdown-label">更多</span>
           <ul>
             <li th:each="link : ${moreLinks}">
               <a

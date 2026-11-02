@@ -230,6 +230,60 @@ body.theme-dark .yue .void-copy-btn.copied {
     }
 }
 
+/* ---------- 搜索栏：内容居中 ---------- */
+
+/* 桌面端：输入框限制宽度并整体居中，与导航同栏宽 */
+.mobile-search-form {
+    padding: 8px 0;
+}
+
+.mobile-search-form label {
+    position: static;
+    height: auto;
+    display: flex;
+    align-items: center;
+    padding-left: 3rem;
+}
+
+.mobile-search-form input {
+    flex: 0 1 480px;
+    padding-left: .75rem;
+    min-width: 0;
+}
+
+.mobile-search-form button {
+    margin-left: .5rem;
+    flex: 0 0 auto;
+}
+
+/* 让 label/input/button 这一行在栏宽内居中 */
+header .container + .mobile-search-form,
+.mobile-search-form {
+    justify-content: center;
+}
+
+@media screen and (max-width: 767px) {
+    .mobile-search-form {
+        padding: 8px 1rem;
+    }
+
+    .mobile-search-form label {
+        position: absolute;
+        padding-left: 0;
+        left: 1.5rem;
+    }
+
+    .mobile-search-form input {
+        flex: 1;
+        padding-left: 3rem;
+        min-width: 0;
+    }
+
+    .mobile-search-form button {
+        margin-left: 0;
+    }
+}
+
 /* ---------- 注音 ---------- */
 article .articleBody ruby rt {
     font-size: 0.55em;

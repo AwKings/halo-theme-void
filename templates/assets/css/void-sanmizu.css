@@ -48,6 +48,21 @@ header .container nav span.dropdown {
     margin: 0 .6rem;
 }
 
+/* 一级菜单统一盒模型：带下拉的 span 与纯链接 <a> 完全一致。
+   label 只是普通文本节点，不能再带一份 padding/margin（否则下拉项比普通链接宽、高）。 */
+header .container nav span.dropdown > .dropdown-label {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    height: auto;
+    line-height: inherit;
+}
+
+/* 下拉项 hover 与普通链接保持同样的反馈 */
+header .container nav span.dropdown:hover > .dropdown-label {
+    opacity: .65;
+}
+
 body:not(.theme-dark) header .container nav a,
 body:not(.theme-dark) header .container nav span.dropdown {
     color: #222;

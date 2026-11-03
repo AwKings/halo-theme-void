@@ -1,9 +1,89 @@
 apiVersion: v1alpha1
 kind: Setting
 metadata:
-  name: theme-void-setting
+  name: theme-void-nav-setting
 spec:
   forms:
+    - group: nav
+      label: 导航页
+      formSchema:
+        - $formkit: text
+          name: page_title
+          label: 页面标题
+          value: ""
+          help: "留空则使用站点标题。"
+        - $formkit: text
+          name: page_subtitle
+          label: 页面副标题
+          value: ""
+          help: "留空则使用站点副标题。"
+        - $formkit: switch
+          name: show_search
+          label: 显示搜索框
+          value: true
+        - $formkit: text
+          name: search_placeholder
+          label: 搜索框提示文字
+          value: "搜索站点，回车打开第一个结果"
+        - $formkit: select
+          name: columns
+          label: 每行卡片数（宽屏）
+          value: "4"
+          options:
+            - label: 3 列
+              value: "3"
+            - label: 4 列
+              value: "4"
+            - label: 5 列
+              value: "5"
+        - $formkit: switch
+          name: show_shortcut_number
+          label: 悬停显示快捷数字
+          value: true
+          help: "显示后可用 Ctrl / ⌘ + 数字直接打开对应站点。"
+        - $formkit: array
+          name: groups
+          label: 分组
+          value: []
+          itemLabels:
+            - type: "text"
+              label: "$value.name"
+          children:
+            - $formkit: text
+              name: name
+              label: 分组名称
+              validation: "required"
+            - $formkit: text
+              name: desc
+              label: 分组描述（显示在标题右侧）
+            - $formkit: array
+              name: sites
+              label: 站点
+              value: []
+              itemLabels:
+                - type: "text"
+                  label: "$value.name"
+                - type: "text"
+                  label: "$value.url"
+              children:
+                - $formkit: text
+                  name: name
+                  label: 名称
+                  validation: "required"
+                - $formkit: text
+                  name: url
+                  label: 链接
+                  validation: "required"
+                - $formkit: text
+                  name: desc
+                  label: 描述
+                - $formkit: attachment
+                  name: logo
+                  label: 图标
+                - $formkit: text
+                  name: badge
+                  label: 角标文字
+                  help: "例如「新」「内网」，留空则不显示。"
     - group: basic
       label: 基础设置
       formSchema:

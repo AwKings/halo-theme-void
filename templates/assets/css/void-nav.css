@@ -1,0 +1,372 @@
+/* ==========================================================================
+   VOID Nav —— 导航页样式
+   风格沿用 VOID：极简排版、细边框、无重阴影、明暗双色
+   ========================================================================== */
+
+.nav-wrapper {
+  padding-top: 1rem;
+  padding-bottom: 5rem;
+}
+
+/* ---------- 搜索框 ---------- */
+
+.nav-search {
+  position: relative;
+  max-width: 560px;
+  margin: 0 auto 2.5rem;
+}
+
+.nav-search .nav-search-icon {
+  position: absolute;
+  left: 1.05rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.35;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.nav-search input {
+  width: 100%;
+  padding: 0.9rem 1rem 0.9rem 2.9rem;
+  font-size: 0.95rem;
+  color: inherit;
+  background: none;
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  outline: none;
+  transition: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.nav-search input::placeholder {
+  color: rgba(0, 0, 0, 0.35);
+}
+
+.nav-search input:focus {
+  border-color: rgba(0, 0, 0, 0.55);
+}
+
+.nav-search input:focus + .nav-search-icon,
+.nav-search:focus-within .nav-search-icon {
+  opacity: 0.7;
+}
+
+.theme-dark .nav-search input {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-dark .nav-search input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.theme-dark .nav-search input:focus {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- 分组锚点 ---------- */
+
+.nav-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 2.5rem;
+  position: sticky;
+  top: var(--nav-sticky-top, 70px);
+  z-index: 2;
+  padding: 0.6rem 0;
+  background: #fff;
+}
+
+.theme-dark .nav-tabs {
+  background: #1a1a1a;
+}
+
+.nav-tabs:empty {
+  display: none;
+}
+
+.nav-tab {
+  padding: 0.28rem 0.85rem;
+  font-size: 0.82rem;
+  color: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  transition: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.nav-tab:hover,
+.nav-tab.active {
+  color: #fff;
+  background: rgba(0, 0, 0, 0.9);
+  border-color: rgba(0, 0, 0, 0.9);
+}
+
+.theme-dark .nav-tab {
+  color: #b0b0b0;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-dark .nav-tab:hover,
+.theme-dark .nav-tab.active {
+  color: #1a1a1a;
+  background: #dfdfdf;
+  border-color: #dfdfdf;
+}
+
+/* ---------- 分组 ---------- */
+
+.nav-group {
+  margin-bottom: 3rem;
+  scroll-margin-top: calc(var(--nav-sticky-top, 70px) + 70px);
+}
+
+.nav-group-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0 0 1.1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgba(0, 0, 0, 0.86);
+}
+
+.nav-group-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.07);
+  transform: translateY(-0.2em);
+}
+
+.nav-group-title small {
+  order: 3;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.35);
+  letter-spacing: 0;
+}
+
+.theme-dark .nav-group-title {
+  color: #dfdfdf;
+}
+
+.theme-dark .nav-group-title::after {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.theme-dark .nav-group-title small {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ---------- 卡片网格 ---------- */
+
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.nav-grid[data-columns="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.nav-grid[data-columns="5"] {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.nav-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.nav-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 0, 0, 0.16);
+  box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.35);
+}
+
+.theme-dark .nav-card {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.theme-dark .nav-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.9);
+}
+
+.nav-card .nav-logo {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.04);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.45);
+  text-transform: uppercase;
+}
+
+.theme-dark .nav-card .nav-logo {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-card .nav-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.nav-card .nav-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.nav-card .nav-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(0, 0, 0, 0.86);
+}
+
+.nav-card .nav-desc {
+  font-size: 0.74rem;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.theme-dark .nav-card .nav-name {
+  color: #dfdfdf;
+}
+
+.theme-dark .nav-card .nav-desc {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.nav-card .nav-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.05rem 0.4rem;
+  font-size: 0.6rem;
+  line-height: 1.4;
+  color: #fff;
+  background: #ff5268;
+  border-bottom-right-radius: 6px;
+}
+
+.nav-card .nav-num {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.4rem;
+  font-size: 0.6rem;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.22);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.nav-card:hover .nav-num {
+  opacity: 1;
+}
+
+.theme-dark .nav-card .nav-num {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* ---------- 空状态 ---------- */
+
+.nav-group-empty,
+.nav-no-result {
+  padding: 2.5rem 0;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.35);
+  font-size: 0.9rem;
+}
+
+.nav-no-result .nav-hint {
+  font-size: 0.78rem;
+  opacity: 0.7;
+}
+
+.theme-dark .nav-group-empty,
+.theme-dark .nav-no-result {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ---------- 响应式 ---------- */
+
+@media screen and (max-width: 1023px) {
+  .nav-grid,
+  .nav-grid[data-columns="5"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .nav-wrapper {
+    padding-bottom: 3rem;
+  }
+
+  .nav-tabs {
+    top: var(--nav-sticky-top, 56px);
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0.6rem 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-grid,
+  .nav-grid[data-columns="3"],
+  .nav-grid[data-columns="5"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nav-group {
+    margin-bottom: 2.2rem;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .nav-grid,
+  .nav-grid[data-columns="3"],
+  .nav-grid[data-columns="5"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-card,
+  .nav-tab,
+  .nav-search input {
+    transition: none;
+  }
+}

@@ -261,6 +261,45 @@ shiki 等插件开着「主题侧渲染」，关掉它。
 
 ---
 
+## 九、导航页主题（`void_nav` 分支）
+
+`void_nav` 分支是同一套主题的「导航页专用」变体：沿用 VOID 的排版、配色与明暗模式，
+首页改成站点导航，信息架构参考 [van-nav](https://github.com/Mereithhh/van-nav)（分组卡片 + 实时搜索 + 键盘快捷键）。
+
+主题名为 `theme-void-nav`，可以和博客主题并存，装在不同的 Halo 站点上。
+
+### 数据怎么填
+
+后台 → 外观 → 主题 → 设置 → **导航页**：
+
+| 设置项 | 说明 |
+| --- | --- |
+| 页面标题 / 副标题 | 首页大标题与小标题，留空则用站点标题、副标题 |
+| 显示搜索框 | 关掉就只剩分组卡片 |
+| 搜索框提示文字 | 自定义 placeholder |
+| 每行卡片数 | 宽屏 3 / 4 / 5 列，窄屏自动降级 |
+| 悬停显示快捷数字 | 开启后可用 `Ctrl` / `⌘` + 数字直接打开对应站点 |
+| 分组 | 可增删，每组有名称、描述（显示在标题右侧）、站点列表 |
+| 站点 | 名称、链接、描述、图标（附件）、角标文字 |
+
+站点顺序就是列表顺序；图标留空时自动用名称首字生成占位块。
+
+### 交互
+
+- 页面内直接敲任意字符 → 自动聚焦搜索框
+- 搜索后按回车 → 新标签打开第一个结果
+- `Ctrl` / `⌘` + `1`~`9` → 新标签打开第 N 个可见站点
+- `Esc` → 清空搜索
+- 顶部锚点吸顶，滚动时高亮当前分组
+
+### 开发提示
+
+- 导航页模板是 `templates/index.html`，样式 `assets/css/void-nav.css`，交互 `assets/js/void-nav.js`
+- 数据结构用 Halo 的 `$formkit: array` 嵌套数组，模板里通过 `theme.config.nav.groups[].sites[]` 读取
+- 改版本号（`theme.yaml` 的 `version`）才会刷新前端静态资源缓存
+
+---
+
 ## 许可与致谢
 
 原主题 [Typecho-Theme-VOID](https://github.com/AlanDecode/Typecho-Theme-VOID) 采用 MIT 协议，版权归原作者 AlanDecode（熊猫小A，<https://blog.imalan.cn>）所有。本移植版同样以 MIT 发布，保留原始版权声明，见 [LICENSE](LICENSE)。

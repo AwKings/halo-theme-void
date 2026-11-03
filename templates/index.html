@@ -5,69 +5,126 @@
 >
   <th:block th:fragment="content">
     <main id="pjax-container">
-      <th:block
-        th:with="
-          banner=${theme.config.basic?.default_banner ?: ''},
-          bannerTitle=${#strings.isEmpty(theme.config.basic?.index_banner_title ?: '') ? site.title : theme.config.basic.index_banner_title},
-          bannerSubtitle=${#strings.isEmpty(theme.config.basic?.index_banner_subtitle ?: '') ? (site.subtitle ?: '') : theme.config.basic.index_banner_subtitle}
-        "
-      >
+      <div class="lazy-wrap index no-banner">
+        <script>
+          $('body>header').addClass('force-dark').addClass('no-banner');
+        </script>
+
         <div
-          class="lazy-wrap index"
-          th:class="${'lazy-wrap index' + (#strings.isEmpty(banner) ? ' no-banner' : ' loading dark')}"
+          class="banner-title index"
+          th:with="navTitle=${theme.config.nav != null and theme.config.nav.page_title != null and !#strings.isEmpty(theme.config.nav.page_title) ? theme.config.nav.page_title : site.title},
+                   navSub=${theme.config.nav != null and theme.config.nav.page_subtitle != null and !#strings.isEmpty(theme.config.nav.page_subtitle) ? theme.config.nav.page_subtitle : (site.subtitle ?: '')}"
         >
-          <div id="banner" th:if="${!#strings.isEmpty(banner)}">
-            <img
-              th:if="${(theme.config.advanced?.browser_level_lazyload ?: false)}"
-              class="lazyload browserlevel-lazy"
-              th:src="${banner}"
-              loading="lazy"
-              alt=""
-            />
-            <img
-              th:if="${!(theme.config.advanced?.browser_level_lazyload ?: false)}"
-              class="lazyload"
-              th:attr="data-src=${banner}"
-              alt=""
-            />
-          </div>
-          <script th:if="${!#strings.isEmpty(banner)}">
-            $('body>header').removeClass('force-dark').removeClass('no-banner');
-          </script>
-          <script th:if="${#strings.isEmpty(banner)}">
-            $('body>header').addClass('force-dark').addClass('no-banner');
-          </script>
-
-          <div
-            class="banner-title index"
-            th:classappend="${!#strings.isEmpty(banner)} ? ' force-normal' : ''"
-          >
-            <h1 class="post-title">
-              <span class="brand"><span th:text="${bannerTitle}"></span></span><br />
-              <span class="subtitle" th:text="${bannerSubtitle}"></span>
-            </h1>
-          </div>
+          <h1 class="post-title">
+            <span class="brand"><span th:text="${navTitle}"></span></span><br />
+            <span class="subtitle" th:text="${navSub}"></span>
+          </h1>
         </div>
-      </th:block>
-
-      <div
-        class="wrapper container"
-        th:classappend="${theme.config.basic?.index_style == '1'} ? ' narrow' : ' wide'"
-      >
-        <section id="index-list" class="float-up">
-          <ul id="masonry">
-            <th:block th:each="post : ${posts.items}">
-              <th:block th:replace="~{partials/post-card :: card(${post}, false)}" />
-            </th:block>
-          </ul>
-          <div th:if="${posts.total == 0}" class="no-post">
-            <p>还没有文章哦～</p>
-          </div>
-        </section>
-        <th:block
-          th:replace="~{partials/pagination :: pager(context = '/', prevUrl = ${posts.prevUrl}, nextUrl = ${posts.nextUrl}, totalPages = ${posts.totalPages}, page = ${posts.page}, hasPrevious = ${posts.hasPrevious()}, hasNext = ${posts.hasNext()})}"
-        />
       </div>
+
+      <div class="wrapper container wide nav-wrapper">
+        <div
+          class="nav-search"
+          th:if="${theme.config.nav == null or theme.config.nav.show_search == null or theme.config.nav.show_search}"
+        >
+          <svg class="nav-search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M10 2a8 8 0 1 0 4.9 14.32l5.39 5.39 1.42-1.42-5.39-5.39A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"
+            />
+          </svg>
+          <input
+            id="nav-search-input"
+            type="search"
+            autocomplete="off"
+            spellcheck="false"
+            th:placeholder="${theme.config.nav != null and theme.config.nav.search_placeholder != null and !#strings.isEmpty(theme.config.nav.search_placeholder) ? theme.config.nav.search_placeholder : '搜索站点，回车打开第一个结果'}"
+          />
+        </div>
+
+        <nav class="nav-tabs" id="nav-tabs">
+          <a
+            th:each="g, gs : ${theme.config.nav != null ? theme.config.nav.groups : null}"
+            class="nav-tab"
+            th:href="|#nav-group-${gs.index}|"
+            th:attr="data-group=${gs.index}"
+            th:text="${g.name}"
+          ></a>
+        </nav>
+
+        <th:block th:if="${theme.config.nav != null and theme.config.nav.groups != null}">
+          <section
+            class="nav-group"
+            th:each="g, gs : ${theme.config.nav.groups}"
+            th:id="|nav-group-${gs.index}|"
+            th:attr="data-group=${gs.index}"
+          >
+            <h2 class="nav-group-title">
+              <span th:text="${g.name}"></span>
+              <small th:if="${g.desc != null and !#strings.isEmpty(g.desc)}" th:text="${g.desc}"></small>
+            </h2>
+
+            <div class="nav-grid" th:attr="data-columns=${theme.config.nav.columns ?: '4'}">
+              <a
+                class="nav-card"
+                th:each="s, ss : ${g.sites}"
+                th:href="${s.url}"
+                target="_blank"
+                rel="noopener"
+                th:attr="data-name=${s.name},data-desc=${s.desc},data-url=${s.url}"
+              >
+                <span class="nav-logo">
+                  <img
+                    th:if="${s.logo != null and !#strings.isEmpty(s.logo)}"
+                    th:src="${s.logo}"
+                    alt=""
+                    loading="lazy"
+                  />
+                  <span
+                    th:unless="${s.logo != null and !#strings.isEmpty(s.logo)}"
+                    th:text="${#strings.isEmpty(s.name) ? '?' : #strings.substring(s.name, 0, 1)}"
+                  ></span>
+                </span>
+                <span class="nav-meta">
+                  <span class="nav-name" th:text="${s.name}"></span>
+                  <span
+                    class="nav-desc"
+                    th:if="${s.desc != null and !#strings.isEmpty(s.desc)}"
+                    th:text="${s.desc}"
+                  ></span>
+                </span>
+                <span
+                  class="nav-badge"
+                  th:if="${s.badge != null and !#strings.isEmpty(s.badge)}"
+                  th:text="${s.badge}"
+                ></span>
+                <span
+                  class="nav-num"
+                  th:if="${theme.config.nav == null or theme.config.nav.show_shortcut_number == null or theme.config.nav.show_shortcut_number}"
+                  th:text="${ss.count}"
+                ></span>
+              </a>
+            </div>
+
+            <p class="nav-group-empty" th:if="${g.sites == null or #lists.isEmpty(g.sites)}">
+              这个分组还没有站点
+            </p>
+          </section>
+        </th:block>
+
+        <div class="nav-no-result" id="nav-no-result" style="display: none">
+          <p>没有找到匹配的站点</p>
+        </div>
+
+        <th:block th:if="${theme.config.nav == null or theme.config.nav.groups == null}">
+          <div class="nav-no-result">
+            <p>还没有配置导航数据</p>
+            <p class="nav-hint">前往后台 → 外观 → 主题 → 导航页，添加分组和站点</p>
+          </div>
+        </th:block>
+      </div>
+
+      <script th:src="@{/assets/js/void-nav.js?v={v}(v=${theme.spec.version})}"></script>
     </main>
   </th:block>
 </html>

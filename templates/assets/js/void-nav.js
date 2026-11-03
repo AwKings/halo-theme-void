@@ -147,20 +147,74 @@
     bar.setAttribute('data-fade', left && right ? 'both' : left ? 'left' : 'right');
   }
 
-  if (expandBtn) {
-    expandBtn.addEventListener('click', function () {
-      if (!tabsWrap) return;
-      var next = !isExpanded();
-      tabsWrap.setAttribute('data-expanded', next ? 'true' : 'false');
+  var reduceMotion =
+    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function scrollActiveIntoView() {
+    var act = tabs.filter(function (t) {
+      return t.classList.contains('active');
+    })[0];
+    if (act) scrollTabIntoView(act);
+  }
+
+  function setExpanded(next) {
+    tabsWrap.setAttribute('data-expanded', next ? 'true' : 'false');
+    updateTabsLayout();
+    if (!next) scrollActiveIntoView();
+  }
+
+  /* 展开/收起带高度过渡动画 */
+  function toggleExpanded() {
+    if (!tabsWrap) return;
+    var bar = document.getElementById('nav-tabs');
+    var next = !isExpanded();
+    if (!bar || reduceMotion) {
+      setExpanded(next);
+      return;
+    }
+
+    var start = bar.getBoundingClientRect().height;
+    var finished = false;
+
+    bar.style.transition = 'none';
+    bar.style.height = start + 'px';
+    bar.style.overflow = 'hidden';
+
+    tabsWrap.setAttribute('data-expanded', next ? 'true' : 'false');
+
+    // 先量出新状态下的自然高度（不能用 scrollHeight，收起时会等于当前固定高度）
+    bar.style.height = 'auto';
+    var target = bar.offsetHeight;
+    bar.style.height = start + 'px';
+    void bar.offsetHeight; // 强制重排，确保起始高度生效
+
+    bar.style.transition = 'height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    bar.style.height = target + 'px';
+
+    var done = function () {
+      if (finished) return;
+      finished = true;
+      bar.style.transition = '';
+      bar.style.height = '';
+      bar.style.overflow = '';
       updateTabsLayout();
-      if (!next) {
-        // 收起后把当前选中的分类滚回可见位置
-        var act = tabs.filter(function (t) {
-          return t.classList.contains('active');
-        })[0];
-        if (act) scrollTabIntoView(act);
-      }
-    });
+      if (!next) scrollActiveIntoView();
+    };
+
+    var onEnd = function (e) {
+      if (e.target !== bar || e.propertyName !== 'height') return;
+      bar.removeEventListener('transitionend', onEnd);
+      done();
+    };
+    bar.addEventListener('transitionend', onEnd);
+    setTimeout(function () {
+      bar.removeEventListener('transitionend', onEnd);
+      done();
+    }, 450);
+  }
+
+  if (expandBtn) {
+    expandBtn.addEventListener('click', toggleExpanded);
   }
 
   function scrollTabIntoView(tab) {

@@ -320,33 +320,13 @@
     expandBtn.addEventListener('click', toggleExpanded);
   }
 
-  /* 与高度动画同节奏的横向滚动（easeOutCubic，0.28s） */
-  function animateScrollLeft(el, to, duration) {
-    var from = el.scrollLeft;
-    var delta = to - from;
-    if (Math.abs(delta) < 1) return;
-    var startTime = null;
-    function step(ts) {
-      if (startTime === null) startTime = ts;
-      var p = Math.min(1, (ts - startTime) / duration);
-      var e = 1 - Math.pow(1 - p, 3);
-      el.scrollLeft = from + delta * e;
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-
   function scrollTabIntoView(tab) {
     var bar = document.getElementById('nav-tabs');
     if (!bar || isExpanded() || bar.scrollWidth <= bar.clientWidth) return;
     var target = tab.offsetLeft - bar.clientWidth / 2 + tab.offsetWidth / 2;
     var maxScroll = bar.scrollWidth - bar.clientWidth;
     target = Math.max(0, Math.min(maxScroll, target));
-    if (reduceMotion) {
-      bar.scrollLeft = target;
-      return;
-    }
-    animateScrollLeft(bar, target, 280);
+    bar.scrollTo({ left: target, behavior: reduceMotion ? 'auto' : 'smooth' });
   }
 
   tabs.forEach(function (tab) {

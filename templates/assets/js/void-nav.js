@@ -191,6 +191,9 @@
     bar.style.transition = 'height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
     bar.style.height = target + 'px';
 
+    // 收起时同时把选中的分类滚进视野，和高度动画并行
+    if (!next) scrollActiveIntoView();
+
     var done = function () {
       if (finished) return;
       finished = true;

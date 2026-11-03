@@ -1,10 +1,40 @@
 /* ==========================================================================
    VOID Nav —— 导航页样式
-   风格沿用 VOID：极简排版、细边框、无重阴影、明暗双色
+   风格严格对齐 VOID：2px 黑色实线边框、直角、无阴影、悬浮只换边框色与标题色
    ========================================================================== */
 
+/* ---------- 极简头部（只有 Logo 与设置按钮） ---------- */
+
+header .container nav.nav-minimal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+header .container nav.nav-minimal a.brand {
+  position: static;
+  left: auto;
+  top: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: 0.075rem;
+}
+
+header .container nav.nav-minimal a#toggle-setting {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+/* ---------- 页面容器 ---------- */
+
 .nav-wrapper {
-  padding-top: 1rem;
+  padding-top: 2.5rem;
   padding-bottom: 5rem;
 }
 
@@ -18,24 +48,24 @@
 
 .nav-search .nav-search-icon {
   position: absolute;
-  left: 1.05rem;
+  left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  opacity: 0.35;
+  opacity: 0.4;
   pointer-events: none;
-  transition: opacity 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) opacity;
 }
 
 .nav-search input {
   width: 100%;
-  padding: 0.9rem 1rem 0.9rem 2.9rem;
+  padding: 0.85rem 1rem 0.85rem 2.8rem;
   font-size: 0.95rem;
   color: inherit;
   background: none;
-  border: 2px solid rgba(0, 0, 0, 0.08);
-  border-radius: 6px;
+  border: solid 2px rgba(0, 0, 0, 0.1);
+  border-radius: 0;
   outline: none;
-  transition: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) border-color;
 }
 
 .nav-search input::placeholder {
@@ -43,24 +73,23 @@
 }
 
 .nav-search input:focus {
-  border-color: rgba(0, 0, 0, 0.55);
+  border-color: rgba(0, 0, 0, 0.86);
 }
 
-.nav-search input:focus + .nav-search-icon,
 .nav-search:focus-within .nav-search-icon {
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 .theme-dark .nav-search input {
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
 .theme-dark .nav-search input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: #aaa;
 }
 
 .theme-dark .nav-search input:focus {
-  border-color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 /* ---------- 分组锚点 ---------- */
@@ -69,12 +98,12 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   margin-bottom: 2.5rem;
   position: sticky;
   top: var(--nav-sticky-top, 70px);
   z-index: 2;
-  padding: 0.6rem 0;
+  padding: 0.7rem 0;
   background: #fff;
 }
 
@@ -87,27 +116,37 @@
 }
 
 .nav-tab {
-  padding: 0.28rem 0.85rem;
+  padding: 0.25rem 0.8rem;
   font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   color: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
-  transition: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border: solid 2px rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+  transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) all;
 }
 
-.nav-tab:hover,
+.nav-tab:hover {
+  color: rgba(0, 0, 0, 0.86);
+  border-color: rgba(0, 0, 0, 0.86);
+}
+
 .nav-tab.active {
   color: #fff;
-  background: rgba(0, 0, 0, 0.9);
-  border-color: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.86);
+  border-color: rgba(0, 0, 0, 0.86);
 }
 
 .theme-dark .nav-tab {
   color: #b0b0b0;
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
-.theme-dark .nav-tab:hover,
+.theme-dark .nav-tab:hover {
+  color: #dfdfdf;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
 .theme-dark .nav-tab.active {
   color: #1a1a1a;
   background: #dfdfdf;
@@ -125,10 +164,11 @@
   display: flex;
   align-items: baseline;
   gap: 0.6rem;
-  margin: 0 0 1.1rem;
-  font-size: 1rem;
+  margin: 0 0 1rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: rgba(0, 0, 0, 0.86);
 }
 
@@ -146,6 +186,7 @@
   font-weight: 400;
   color: rgba(0, 0, 0, 0.35);
   letter-spacing: 0;
+  text-transform: none;
 }
 
 .theme-dark .nav-group-title {
@@ -157,7 +198,7 @@
 }
 
 .theme-dark .nav-group-title small {
-  color: rgba(255, 255, 255, 0.35);
+  color: #aaa;
 }
 
 /* ---------- 卡片网格 ---------- */
@@ -165,7 +206,7 @@
 .nav-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .nav-grid[data-columns="3"] {
@@ -180,27 +221,22 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.75rem;
   padding: 0.75rem 0.9rem;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 8px;
+  border: solid 2px rgba(0, 0, 0, 0.86);
+  border-radius: 0;
+  background: none;
   overflow: hidden;
-  transition: 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.nav-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(0, 0, 0, 0.16);
-  box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.35);
+  transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) border-color,
+    0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) color;
 }
 
 .theme-dark .nav-card {
-  border-color: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
-.theme-dark .nav-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.9);
+.nav-card:hover {
+  border-color: #bd6262;
 }
 
 .nav-card .nav-logo {
@@ -210,7 +246,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 7px;
+  border-radius: 0;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.04);
   font-size: 0.95rem;
@@ -246,6 +282,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   color: rgba(0, 0, 0, 0.86);
+  transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) color;
+}
+
+.nav-card:hover .nav-name {
+  color: #bd6262;
 }
 
 .nav-card .nav-desc {
@@ -261,8 +302,12 @@
   color: #dfdfdf;
 }
 
+.theme-dark .nav-card:hover .nav-name {
+  color: #bd6262;
+}
+
 .theme-dark .nav-card .nav-desc {
-  color: rgba(255, 255, 255, 0.32);
+  color: #aaa;
 }
 
 .nav-card .nav-badge {
@@ -274,7 +319,7 @@
   line-height: 1.4;
   color: #fff;
   background: #ff5268;
-  border-bottom-right-radius: 6px;
+  border-radius: 0;
 }
 
 .nav-card .nav-num {
@@ -285,7 +330,7 @@
   line-height: 1;
   color: rgba(0, 0, 0, 0.22);
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: 0.1s opacity;
 }
 
 .nav-card:hover .nav-num {
@@ -313,7 +358,7 @@
 
 .theme-dark .nav-group-empty,
 .theme-dark .nav-no-result {
-  color: rgba(255, 255, 255, 0.35);
+  color: #aaa;
 }
 
 /* ---------- 响应式 ---------- */
@@ -327,7 +372,16 @@
 
 @media screen and (max-width: 767px) {
   .nav-wrapper {
+    padding-top: calc(var(--nav-sticky-top, 50px) + 1.25rem);
     padding-bottom: 3rem;
+  }
+
+  header .container nav.nav-minimal a.brand {
+    font-size: 1.3rem;
+  }
+
+  header .container nav.nav-minimal a#toggle-setting {
+    display: flex !important;
   }
 
   .nav-tabs {
@@ -335,7 +389,7 @@
     justify-content: flex-start;
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding: 0.6rem 0;
+    padding: 0.7rem 0;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
@@ -366,7 +420,8 @@
 @media (prefers-reduced-motion: reduce) {
   .nav-card,
   .nav-tab,
-  .nav-search input {
+  .nav-search input,
+  .nav-card .nav-name {
     transition: none;
   }
 }

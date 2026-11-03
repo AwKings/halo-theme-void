@@ -5,23 +5,6 @@
 >
   <th:block th:fragment="content">
     <main id="pjax-container">
-      <div class="lazy-wrap index no-banner">
-        <script>
-          $('body>header').addClass('force-dark').addClass('no-banner');
-        </script>
-
-        <div
-          class="banner-title index"
-          th:with="navTitle=${theme.config.nav != null and theme.config.nav.page_title != null and !#strings.isEmpty(theme.config.nav.page_title) ? theme.config.nav.page_title : site.title},
-                   navSub=${theme.config.nav != null and theme.config.nav.page_subtitle != null and !#strings.isEmpty(theme.config.nav.page_subtitle) ? theme.config.nav.page_subtitle : (site.subtitle ?: '')}"
-        >
-          <h1 class="post-title">
-            <span class="brand"><span th:text="${navTitle}"></span></span><br />
-            <span class="subtitle" th:text="${navSub}"></span>
-          </h1>
-        </div>
-      </div>
-
       <div class="wrapper container wide nav-wrapper">
         <div
           class="nav-search"

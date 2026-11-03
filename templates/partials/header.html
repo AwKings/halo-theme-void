@@ -3,121 +3,18 @@
   th:class="|header-mode-${theme.config.advanced?.header_mode ?: '1'} force-dark no-banner|"
 >
   <div class="container wider">
-    <nav>
-      <a
-        role="button"
-        aria-label="展开导航"
-        class="toggle"
-        target="_self"
-        href="javascript:void(0);"
-        onclick="VOID_Ui.toggleNav(this);"
-      >
-        <span></span>
-      </a>
+    <nav class="nav-minimal">
       <a class="brand" th:href="@{/}" th:text="${theme.config.basic?.brand_name ?: site.title}">VOID</a>
-
-      <th:block th:with="menu=${menuFinder.getPrimary()}">
-        <th:block th:if="${menu != null}">
-          <th:block th:each="item : ${menu.menuItems}">
-            <span
-              class="dropdown"
-              th:if="${item.children != null and !#lists.isEmpty(item.children)}"
-            >
-              <span class="dropdown-label" th:text="${item.status.displayName}"></span>
-              <ul>
-                <li th:each="child : ${item.children}">
-                  <a
-                    th:href="@{${child.status.href}}"
-                    th:text="${child.status.displayName}"
-                    th:target="${child.spec.target?.value}"
-                  ></a>
-                </li>
-              </ul>
-            </span>
-            <a
-              th:if="${item.children == null or #lists.isEmpty(item.children)}"
-              th:href="@{${item.status.href}}"
-              th:text="${item.status.displayName}"
-              th:target="${item.spec.target?.value}"
-            ></a>
-          </th:block>
-        </th:block>
-      </th:block>
-
-      <th:block th:with="moreLinks=${theme.config.advanced?.more_menu}">
-        <span class="dropdown" th:if="${moreLinks != null and !#lists.isEmpty(moreLinks)}">
-          <span class="dropdown-label">更多</span>
-          <ul>
-            <li th:each="link : ${moreLinks}">
-              <a
-                th:href="${link.href}"
-                th:text="${link.name}"
-                th:target="${link.target ?: '_blank'}"
-                th:attr="rel=${(link.target ?: '_blank') == '_blank' ? 'noopener' : null}"
-              ></a>
-            </li>
-          </ul>
-        </span>
-      </th:block>
-
-      <a
-        role="button"
-        aria-label="展开搜索"
-        class="search-form-input"
-        style="display: flex"
-        id="toggle-mobile-search"
-        target="_self"
-        href="javascript:void(0);"
-        onclick="VOID_Ui.toggleSearch(this);"
-      >
-        <i class="voidicon-search"></i>
-      </a>
       <a
         target="_self"
         href="javascript:void(0);"
         id="toggle-setting"
+        aria-label="设置"
         onclick="VOID_Ui.toggleSettingPanel();"
       >
         <i class="voidicon-cog"></i>
       </a>
     </nav>
   </div>
-  <div class="mobile-search-form">
-    <label for="search_new">搜索</label>
-    <input
-      onkeydown="VOID.enterSearch(event, this);"
-      type="text"
-      name="search-content"
-      id="search_new"
-      required
-      placeholder="输入内容然后 Go!"
-    />
-    <button onclick="VOID.startSearch('#search_new');">Go!</button>
-  </div>
 </header>
-
-<div id="nav-mobile">
-  <section id="pages" data-title="PAGES">
-    <nav>
-      <th:block th:with="menu=${menuFinder.getPrimary()}">
-        <th:block th:if="${menu != null}">
-          <a
-            th:each="item : ${menu.menuItems}"
-            th:href="@{${item.status.href}}"
-            th:text="${item.status.displayName}"
-          ></a>
-        </th:block>
-      </th:block>
-    </nav>
-  </section>
-  <section id="categories" data-title="CATEGORIES">
-    <nav>
-      <a
-        th:each="cat : ${categoryFinder.listAll()}"
-        th:href="@{${cat.status.permalink}}"
-        th:text="${cat.spec.displayName}"
-      ></a>
-    </nav>
-  </section>
-</div>
 </th:block>

@@ -7,16 +7,6 @@ spec:
     - group: nav
       label: 导航页
       formSchema:
-        - $formkit: text
-          name: page_title
-          label: 页面标题
-          value: ""
-          help: "留空则使用站点标题。"
-        - $formkit: text
-          name: page_subtitle
-          label: 页面副标题
-          value: ""
-          help: "留空则使用站点副标题。"
         - $formkit: switch
           name: show_search
           label: 显示搜索框

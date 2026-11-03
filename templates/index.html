@@ -26,13 +26,14 @@
         </div>
 
         <nav class="nav-tabs" id="nav-tabs">
-          <a
+          <button type="button" class="nav-tab active" data-group="all">全部</button>
+          <button
+            type="button"
             th:each="g, gs : ${theme.config.nav != null ? theme.config.nav.groups : null}"
             class="nav-tab"
-            th:href="|#nav-group-${gs.index}|"
             th:attr="data-group=${gs.index}"
             th:text="${g.name}"
-          ></a>
+          ></button>
         </nav>
 
         <th:block th:if="${theme.config.nav != null and theme.config.nav.groups != null}">

@@ -1,6 +1,6 @@
 /* ==========================================================================
    VOID Nav —— 导航页交互
-   搜索过滤 / 键盘快捷键 / 分组锚点高亮
+   分类筛选（默认「全部」）/ 搜索过滤 / 键盘快捷键
    ========================================================================== */
 (function () {
   'use strict';
@@ -13,6 +13,8 @@
 
   if (!cards.length) return;
 
+  var activeGroup = 'all'; // 'all' 或分组序号
+
   /* ---------- 吸顶偏移跟随头部高度 ---------- */
 
   function syncStickyOffset() {
@@ -24,43 +26,86 @@
   syncStickyOffset();
   window.addEventListener('resize', syncStickyOffset);
 
-  /* ---------- 搜索过滤 ---------- */
+  /* ---------- 过滤 ---------- */
 
   function normalize(str) {
     return (str || '').toLowerCase().trim();
   }
 
-  function filter(keyword) {
-    var kw = normalize(keyword);
-    var visible = 0;
-
-    cards.forEach(function (card) {
-      var haystack = [
-        card.getAttribute('data-name'),
-        card.getAttribute('data-desc'),
-        card.getAttribute('data-url')
-      ].map(normalize).join(' ');
-      var hit = !kw || haystack.indexOf(kw) !== -1;
-      card.style.display = hit ? '' : 'none';
-      if (hit) visible++;
-    });
-
-    groups.forEach(function (group) {
-      var shown = group.querySelectorAll('.nav-card:not([style*="display: none"])').length;
-      var empty = group.querySelector('.nav-group-empty');
-      group.style.display = shown || (empty && kw === '') ? '' : 'none';
-
-      var tab = tabs[Number(group.getAttribute('data-group'))];
-      if (tab) tab.style.display = shown ? '' : 'none';
-    });
-
-    if (noResult) noResult.style.display = visible ? 'none' : '';
-    return visible;
+  function haystack(card) {
+    return [
+      card.getAttribute('data-name'),
+      card.getAttribute('data-desc'),
+      card.getAttribute('data-url')
+    ]
+      .map(normalize)
+      .join(' ');
   }
+
+  function visibleCardsIn(group) {
+    return Array.prototype.filter.call(group.querySelectorAll('.nav-card'), function (c) {
+      return c.style.display !== 'none';
+    });
+  }
+
+  function applyFilter() {
+    var kw = normalize(input ? input.value : '');
+    var total = 0;
+
+    // 1. 先按关键词筛卡片
+    cards.forEach(function (card) {
+      card.style.display = !kw || haystack(card).indexOf(kw) !== -1 ? '' : 'none';
+    });
+
+    // 2. 再按选中分组决定哪些分组显示
+    groups.forEach(function (group) {
+      var gi = group.getAttribute('data-group');
+      var inGroup = activeGroup === 'all' || gi === activeGroup;
+      var shown = visibleCardsIn(group).length;
+      var emptyHint = group.querySelector('.nav-group-empty');
+      var keepEmptyHint = emptyHint && kw === '';
+
+      group.style.display = inGroup && (shown > 0 || keepEmptyHint) ? '' : 'none';
+      total += inGroup ? shown : 0;
+
+      // 3. 搜索时把没有命中的分组按钮隐起来，避免点了空白
+      var tab = tabs.filter(function (t) {
+        return t.getAttribute('data-group') === gi;
+      })[0];
+      if (tab) tab.style.display = !kw || shown > 0 || gi === activeGroup ? '' : 'none';
+    });
+
+    if (noResult) noResult.style.display = total ? 'none' : '';
+    return total;
+  }
+
+  /* ---------- 分类筛选按钮 ---------- */
+
+  function selectTab(tab) {
+    activeGroup = tab.getAttribute('data-group') || 'all';
+    tabs.forEach(function (t) {
+      t.classList.toggle('active', t === tab);
+    });
+    applyFilter();
+    // 切换分类时回到列表顶部，避免停在页面中间
+    var tabsTop = document.getElementById('nav-tabs');
+    if (tabsTop) {
+      var offset = tabsTop.getBoundingClientRect().top + window.scrollY;
+      if (window.scrollY > offset) window.scrollTo({ top: offset, behavior: 'smooth' });
+    }
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      selectTab(tab);
+    });
+  });
+
+  /* ---------- 搜索框 ---------- */
 
   if (input) {
     input.addEventListener('input', function () {
-      filter(input.value);
+      applyFilter();
     });
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
@@ -70,15 +115,13 @@
         if (first) window.open(first.href, '_blank', 'noopener');
       } else if (e.key === 'Escape') {
         input.value = '';
-        filter('');
+        applyFilter();
         input.blur();
       }
     });
   }
 
   /* ---------- 键盘：任意键聚焦搜索 / Ctrl+数字打开第 N 个 ---------- */
-
-  var isMac = /Mac|iPhone|iPad/.test(navigator.platform);
 
   document.addEventListener('keydown', function (e) {
     var tag = (e.target.tagName || '').toLowerCase();
@@ -106,41 +149,11 @@
     }
   });
 
-  /* ---------- 滚动高亮当前分组 ---------- */
+  /* ---------- 初始化：默认「全部」 ---------- */
 
-  if ('IntersectionObserver' in window && tabs.length) {
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          var idx = entry.target.getAttribute('data-group');
-          tabs.forEach(function (tab) {
-            tab.classList.toggle('active', tab.getAttribute('data-group') === idx);
-          });
-        });
-      },
-      { rootMargin: '-120px 0px -70% 0px', threshold: 0 }
-    );
-    groups.forEach(function (group) {
-      observer.observe(group);
-    });
-  }
-
-  /* ---------- 平滑滚动到分组 ---------- */
-
-  tabs.forEach(function (tab) {
-    tab.addEventListener('click', function (e) {
-      var id = tab.getAttribute('href');
-      var target = document.querySelector(id);
-      if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
-
-  /* ---------- 提示：Mac 用 ⌘ ---------- */
-
-  if (isMac) {
-    document.documentElement.setAttribute('data-platform', 'mac');
-  }
+  var allTab = tabs.filter(function (t) {
+    return t.getAttribute('data-group') === 'all';
+  })[0];
+  if (allTab) selectTab(allTab);
+  else applyFilter();
 })();

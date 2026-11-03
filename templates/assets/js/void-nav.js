@@ -76,6 +76,7 @@
     });
 
     if (noResult) noResult.style.display = total ? 'none' : '';
+    updateTabsFade();
     return total;
   }
 
@@ -110,6 +111,7 @@
     if (!bar) return;
     if (isExpanded()) {
       bar.setAttribute('data-compact', 'false');
+      bar.removeAttribute('data-fade');
       if (expandBtn) {
         expandBtn.setAttribute('data-visible', 'true');
         expandBtn.textContent = '收起';
@@ -124,6 +126,25 @@
       expandBtn.textContent = '展开';
       expandBtn.setAttribute('aria-expanded', 'false');
     }
+    updateTabsFade();
+  }
+
+  /* 被裁切的一侧加渐隐，避免出现硬切的「半截按钮」 */
+  function updateTabsFade() {
+    var bar = document.getElementById('nav-tabs');
+    if (!bar) return;
+    if (isExpanded()) {
+      bar.removeAttribute('data-fade');
+      return;
+    }
+    var maxScroll = bar.scrollWidth - bar.clientWidth;
+    if (maxScroll <= 1) {
+      bar.removeAttribute('data-fade');
+      return;
+    }
+    var left = bar.scrollLeft > 1;
+    var right = bar.scrollLeft < maxScroll - 1;
+    bar.setAttribute('data-fade', left && right ? 'both' : left ? 'left' : 'right');
   }
 
   if (expandBtn) {
@@ -211,5 +232,10 @@
   if (allTab) selectTab(allTab);
   else applyFilter();
   updateTabsLayout();
+
+  var tabsBarEl = document.getElementById('nav-tabs');
+  if (tabsBarEl) {
+    tabsBarEl.addEventListener('scroll', updateTabsFade, { passive: true });
+  }
   window.addEventListener('resize', updateTabsLayout);
 })();

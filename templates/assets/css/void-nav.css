@@ -117,6 +117,35 @@ header .container nav.nav-minimal a.brand {
   scrollbar-width: none;
   -ms-overflow-style: none;
   overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+
+/* 被裁切的边缘做渐隐，避免出现「半截按钮」的硬切感 */
+.nav-tabs[data-fade="right"] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent 100%);
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent 100%);
+}
+
+.nav-tabs[data-fade="left"] {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 32px);
+  mask-image: linear-gradient(to right, transparent 0, #000 32px);
+}
+
+.nav-tabs[data-fade="both"] {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 32px,
+    #000 calc(100% - 32px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 32px,
+    #000 calc(100% - 32px),
+    transparent 100%
+  );
 }
 
 .nav-tabs::-webkit-scrollbar {
@@ -190,6 +219,7 @@ header .container nav.nav-minimal a.brand {
 
 .nav-tab {
   flex: 0 0 auto;
+  scroll-snap-align: start;
 }
 
 .nav-tabs:empty {

@@ -115,14 +115,20 @@ header .container nav.nav-minimal a#toggle-setting {
   display: none;
 }
 
+.nav-tab,
+.nav-tab:hover,
+.nav-tab:focus,
+.nav-tab.active {
+  border: solid 2px rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+}
+
 .nav-tab {
   padding: 0.25rem 0.8rem;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: rgba(0, 0, 0, 0.55);
-  border: solid 2px rgba(0, 0, 0, 0.1);
-  border-radius: 0;
   transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) all;
 }
 
@@ -137,9 +143,15 @@ header .container nav.nav-minimal a#toggle-setting {
   border-color: rgba(0, 0, 0, 0.86);
 }
 
+.theme-dark .nav-tab,
+.theme-dark .nav-tab:hover,
+.theme-dark .nav-tab:focus,
+.theme-dark .nav-tab.active {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
 .theme-dark .nav-tab {
   color: #b0b0b0;
-  border-color: rgba(255, 255, 255, 0.05);
 }
 
 .theme-dark .nav-tab:hover {
@@ -217,25 +229,38 @@ header .container nav.nav-minimal a#toggle-setting {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.nav-card,
+.nav-card:hover,
+.nav-card:focus,
+.nav-card:visited {
+  border: solid 2px rgba(0, 0, 0, 0.86);
+  border-radius: 0;
+}
+
 .nav-card {
   position: relative;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 0.9rem;
-  border: solid 2px rgba(0, 0, 0, 0.86);
-  border-radius: 0;
   background: none;
   overflow: hidden;
   transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) border-color,
     0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) color;
 }
 
-.theme-dark .nav-card {
+.theme-dark .nav-card,
+.theme-dark .nav-card:hover,
+.theme-dark .nav-card:focus,
+.theme-dark .nav-card:visited {
   border-color: rgba(255, 255, 255, 0.05);
 }
 
 .nav-card:hover {
+  border-color: #bd6262;
+}
+
+.theme-dark .nav-card:hover {
   border-color: #bd6262;
 }
 

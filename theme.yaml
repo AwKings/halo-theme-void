@@ -5,7 +5,7 @@ metadata:
 spec:
   displayName: VOID Nav
   author:
-    name: awking
+    name: AwKings
   description: >-
     基于 VOID（无类型）主题的导航页专用主题，沿用 VOID 的排版与配色，提供分组卡片、
     实时搜索与键盘快捷键。信息架构参考 van-nav（https://github.com/Mereithhh/van-nav）。

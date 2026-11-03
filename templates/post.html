@@ -255,7 +255,7 @@
                     <a th:href="@{${cursor.previous.status.permalink}}">
                       <h2 th:text="${cursor.previous.spec.title}"></h2>
                     </a>
-                    <p th:if="${!#strings.isEmpty(cursor.previous.status.excerpt)}" th:utext="${cursor.previous.status.excerpt}"></p>
+                    <p th:if="${!#strings.isEmpty(cursor.previous.status.excerpt)}" th:text="${cursor.previous.status.excerpt}"></p>
                   </th:block>
                   <h2 th:unless="${cursor.hasPrevious()}">没有了</h2>
                 </div>
@@ -264,7 +264,7 @@
                     <a th:href="@{${cursor.next.status.permalink}}">
                       <h2 th:text="${cursor.next.spec.title}"></h2>
                     </a>
-                    <p th:if="${!#strings.isEmpty(cursor.next.status.excerpt)}" th:utext="${cursor.next.status.excerpt}"></p>
+                    <p th:if="${!#strings.isEmpty(cursor.next.status.excerpt)}" th:text="${cursor.next.status.excerpt}"></p>
                   </th:block>
                   <h2 th:unless="${cursor.hasNext()}">没有了</h2>
                 </div>

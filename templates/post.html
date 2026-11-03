@@ -251,15 +251,6 @@
 
               <div class="post-pager" th:with="cursor = ${postFinder.cursor(post.metadata.name)}">
                 <div class="prev">
-                  <th:block th:if="${cursor.hasPrevious()}">
-                    <a th:href="@{${cursor.previous.status.permalink}}">
-                      <h2 th:text="${cursor.previous.spec.title}"></h2>
-                    </a>
-                    <p th:if="${!#strings.isEmpty(cursor.previous.status.excerpt)}" th:text="${cursor.previous.status.excerpt}"></p>
-                  </th:block>
-                  <h2 th:unless="${cursor.hasPrevious()}">没有了</h2>
-                </div>
-                <div class="next">
                   <th:block th:if="${cursor.hasNext()}">
                     <a th:href="@{${cursor.next.status.permalink}}">
                       <h2 th:text="${cursor.next.spec.title}"></h2>
@@ -267,6 +258,15 @@
                     <p th:if="${!#strings.isEmpty(cursor.next.status.excerpt)}" th:text="${cursor.next.status.excerpt}"></p>
                   </th:block>
                   <h2 th:unless="${cursor.hasNext()}">没有了</h2>
+                </div>
+                <div class="next">
+                  <th:block th:if="${cursor.hasPrevious()}">
+                    <a th:href="@{${cursor.previous.status.permalink}}">
+                      <h2 th:text="${cursor.previous.spec.title}"></h2>
+                    </a>
+                    <p th:if="${!#strings.isEmpty(cursor.previous.status.excerpt)}" th:text="${cursor.previous.status.excerpt}"></p>
+                  </th:block>
+                  <h2 th:unless="${cursor.hasPrevious()}">没有了</h2>
                 </div>
               </div>
             </section>

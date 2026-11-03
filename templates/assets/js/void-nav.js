@@ -163,50 +163,10 @@
     if (!next) scrollActiveIntoView();
   }
 
-  /* ---------- 首行成员差异导致的「半截按钮」处理 ---------- */
+  /* ---------- 展开/收起时的透明度复位 ---------- */
 
   function allTabs(bar) {
     return Array.prototype.slice.call(bar.querySelectorAll('.nav-tab'));
-  }
-
-  /* 当前布局下第一行（同一 top）的按钮 */
-  function tabsInRowOne(bar) {
-    var list = allTabs(bar);
-    if (!list.length) return [];
-    var top0 = Math.round(list[0].getBoundingClientRect().top);
-    return list.filter(function (t) {
-      return Math.abs(Math.round(t.getBoundingClientRect().top) - top0) < 2;
-    });
-  }
-
-  /* 单行滚动视图里能看到的按钮（含右边缘被裁一半的） */
-  function tabsInViewport(bar) {
-    var bb = bar.getBoundingClientRect();
-    return allTabs(bar).filter(function (t) {
-      var r = t.getBoundingClientRect();
-      return r.right > bb.left + 1 && r.left < bb.right - 1;
-    });
-  }
-
-  /* 横跨右边界的那一颗（半显示半隐藏） */
-  function tabsStraddlingEdge(bar) {
-    var bb = bar.getBoundingClientRect();
-    return allTabs(bar).filter(function (t) {
-      var r = t.getBoundingClientRect();
-      return r.left < bb.right - 1 && r.right > bb.right + 1;
-    });
-  }
-
-  function fadeTabs(list, from, to, ms) {
-    list.forEach(function (t) {
-      t.style.transition = 'none';
-      t.style.opacity = String(from);
-    });
-    void document.body.offsetHeight; // 强制重排，让起始透明度生效
-    list.forEach(function (t) {
-      t.style.transition = 'opacity ' + ms + 'ms linear';
-      t.style.opacity = String(to);
-    });
   }
 
   function clearTabOpacity(bar) {
@@ -227,17 +187,6 @@
       return;
     }
 
-    // 展开前先把右边缘那颗半截按钮淡出，避免切布局时「突然消失」
-    if (next) {
-      var edge = tabsStraddlingEdge(bar);
-      if (edge.length) {
-        fadeTabs(edge, 1, 0, 120);
-        setTimeout(function () {
-          runTabsTransition(true);
-        }, 120);
-        return;
-      }
-    }
     runTabsTransition(next);
   }
 
@@ -247,7 +196,6 @@
 
     var startH = bar.getBoundingClientRect().height;
     var startScroll = bar.scrollLeft;
-    var rowOneBefore = tabsInRowOne(bar); // 当前布局首行成员
     var finished = false;
 
     bar.style.transition = 'none';
@@ -286,13 +234,6 @@
         bar.style.transition = '';
         bar.style.height = '';
         bar.style.overflow = '';
-        var entering = tabsInViewport(bar).filter(function (t) {
-          return rowOneBefore.indexOf(t) === -1;
-        });
-        if (entering.length) fadeTabs(entering, 0, 1, 180);
-        setTimeout(function () {
-          clearTabOpacity(bar);
-        }, 200);
       } else {
         bar.style.transition = '';
         bar.style.height = '';
@@ -320,13 +261,39 @@
     expandBtn.addEventListener('click', toggleExpanded);
   }
 
+  var scrollAnim = null;
+
+  /* 显式动画：部分浏览器/设置下原生 behavior:'smooth' 不生效，这里自己插值 */
+  function animateScrollLeft(bar, target) {
+    if (scrollAnim) {
+      cancelAnimationFrame(scrollAnim);
+      scrollAnim = null;
+    }
+    var start = bar.scrollLeft;
+    var delta = target - start;
+    if (Math.abs(delta) < 1) return;
+    if (reduceMotion) {
+      bar.scrollLeft = target;
+      return;
+    }
+    var duration = Math.min(520, Math.max(260, Math.abs(delta) * 0.7));
+    var t0 = performance.now();
+    function step(now) {
+      var p = Math.min(1, (now - t0) / duration);
+      var eased = 1 - Math.pow(1 - p, 3);
+      bar.scrollLeft = start + delta * eased;
+      scrollAnim = p < 1 ? requestAnimationFrame(step) : null;
+    }
+    scrollAnim = requestAnimationFrame(step);
+  }
+
   function scrollTabIntoView(tab) {
     var bar = document.getElementById('nav-tabs');
     if (!bar || isExpanded() || bar.scrollWidth <= bar.clientWidth) return;
     var target = tab.offsetLeft - bar.clientWidth / 2 + tab.offsetWidth / 2;
     var maxScroll = bar.scrollWidth - bar.clientWidth;
     target = Math.max(0, Math.min(maxScroll, target));
-    bar.scrollTo({ left: target, behavior: reduceMotion ? 'auto' : 'smooth' });
+    animateScrollLeft(bar, target);
   }
 
   tabs.forEach(function (tab) {

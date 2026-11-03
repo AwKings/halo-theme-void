@@ -118,7 +118,6 @@ header .container nav.nav-minimal a.brand {
   scrollbar-width: none;
   -ms-overflow-style: none;
   overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
 }
 
 /* 被裁切的边缘做渐隐，避免出现「半截按钮」的硬切感 */
@@ -173,6 +172,8 @@ header .container nav.nav-minimal a.brand {
   flex: 0 0 auto;
   display: none;
   align-items: center;
+  justify-content: center;
+  min-width: 3.7rem;
   padding: 0.25rem 0.7rem;
   font-size: 0.82rem;
   font-weight: 700;
@@ -220,7 +221,6 @@ header .container nav.nav-minimal a.brand {
 
 .nav-tab {
   flex: 0 0 auto;
-  scroll-snap-align: start;
 }
 
 .nav-tabs:empty {

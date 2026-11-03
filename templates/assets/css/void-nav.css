@@ -8,7 +8,7 @@
 header .container nav.nav-minimal {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   height: 100%;
 }
@@ -19,16 +19,11 @@ header .container nav.nav-minimal a.brand {
   top: auto;
   height: auto;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   font-size: 1.5rem;
   line-height: 1;
   letter-spacing: 0.075rem;
-}
-
-header .container nav.nav-minimal a#toggle-setting {
-  display: flex;
-  align-items: center;
-  margin: 0;
+  text-align: center;
 }
 
 /* ---------- 页面容器 ---------- */
@@ -418,10 +413,6 @@ header .container nav.nav-minimal a#toggle-setting {
 
   header .container nav.nav-minimal a.brand {
     font-size: 1.3rem;
-  }
-
-  header .container nav.nav-minimal a#toggle-setting {
-    display: flex !important;
   }
 
   .nav-tabs {

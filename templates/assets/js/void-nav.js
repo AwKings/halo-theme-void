@@ -163,47 +163,145 @@
     if (!next) scrollActiveIntoView();
   }
 
+  /* ---------- 首行成员差异导致的「半截按钮」处理 ---------- */
+
+  function allTabs(bar) {
+    return Array.prototype.slice.call(bar.querySelectorAll('.nav-tab'));
+  }
+
+  /* 当前布局下第一行（同一 top）的按钮 */
+  function tabsInRowOne(bar) {
+    var list = allTabs(bar);
+    if (!list.length) return [];
+    var top0 = Math.round(list[0].getBoundingClientRect().top);
+    return list.filter(function (t) {
+      return Math.abs(Math.round(t.getBoundingClientRect().top) - top0) < 2;
+    });
+  }
+
+  /* 单行滚动视图里能看到的按钮（含右边缘被裁一半的） */
+  function tabsInViewport(bar) {
+    var bb = bar.getBoundingClientRect();
+    return allTabs(bar).filter(function (t) {
+      var r = t.getBoundingClientRect();
+      return r.right > bb.left + 1 && r.left < bb.right - 1;
+    });
+  }
+
+  /* 横跨右边界的那一颗（半显示半隐藏） */
+  function tabsStraddlingEdge(bar) {
+    var bb = bar.getBoundingClientRect();
+    return allTabs(bar).filter(function (t) {
+      var r = t.getBoundingClientRect();
+      return r.left < bb.right - 1 && r.right > bb.right + 1;
+    });
+  }
+
+  function fadeTabs(list, from, to, ms) {
+    list.forEach(function (t) {
+      t.style.transition = 'none';
+      t.style.opacity = String(from);
+    });
+    void document.body.offsetHeight; // 强制重排，让起始透明度生效
+    list.forEach(function (t) {
+      t.style.transition = 'opacity ' + ms + 'ms linear';
+      t.style.opacity = String(to);
+    });
+  }
+
+  function clearTabOpacity(bar) {
+    allTabs(bar).forEach(function (t) {
+      t.style.transition = '';
+      t.style.opacity = '';
+    });
+  }
+
   /* 展开/收起带高度过渡动画 */
   function toggleExpanded() {
     if (!tabsWrap) return;
     var bar = document.getElementById('nav-tabs');
+    if (!bar) return;
     var next = !isExpanded();
-    if (!bar || reduceMotion) {
+    if (reduceMotion) {
       setExpanded(next);
       return;
     }
 
-    var start = bar.getBoundingClientRect().height;
+    // 展开前先把右边缘那颗半截按钮淡出，避免切布局时「突然消失」
+    if (next) {
+      var edge = tabsStraddlingEdge(bar);
+      if (edge.length) {
+        fadeTabs(edge, 1, 0, 120);
+        setTimeout(function () {
+          runTabsTransition(true);
+        }, 120);
+        return;
+      }
+    }
+    runTabsTransition(next);
+  }
+
+  function runTabsTransition(toExpanded) {
+    var bar = document.getElementById('nav-tabs');
+    if (!bar) return;
+
+    var startH = bar.getBoundingClientRect().height;
+    var startScroll = bar.scrollLeft;
+    var rowOneBefore = tabsInRowOne(bar); // 当前布局首行成员
     var finished = false;
 
     bar.style.transition = 'none';
-    bar.style.height = start + 'px';
+    bar.style.height = startH + 'px';
     bar.style.overflow = 'hidden';
 
-    // 先临时切到目标布局量一次自然高度（同帧内还原，不会产生绘制）
-    tabsWrap.setAttribute('data-expanded', next ? 'true' : 'false');
+    // 量两种布局的自然高度
+    tabsWrap.setAttribute('data-expanded', 'true');
     bar.style.height = 'auto';
-    var target = bar.offsetHeight;
+    var expandedH = bar.offsetHeight;
+    tabsWrap.setAttribute('data-expanded', 'false');
+    bar.style.height = 'auto';
+    var collapsedH = bar.offsetHeight;
+    var targetH = toExpanded ? expandedH : collapsedH;
 
-    // 收起：动画期间保持多行布局，让行从底部被裁掉；动画结束再切成单行
-    if (!next) tabsWrap.setAttribute('data-expanded', 'true');
+    // 展开：立刻切多行（行被高度裁住）；收起：动画期间仍保持多行，结束再切单行
+    tabsWrap.setAttribute('data-expanded', 'true');
 
-    bar.style.height = start + 'px';
+    // 展开时那颗半截按钮已经落到第二行（被裁住不可见），把透明度还原
+    if (toExpanded) clearTabOpacity(bar);
+
+    bar.style.height = startH + 'px';
+    bar.scrollLeft = startScroll;
     void bar.offsetHeight; // 强制重排，确保起始高度生效
 
     bar.style.transition = 'height 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    bar.style.height = target + 'px';
+    bar.style.height = targetH + 'px';
 
     var done = function () {
       if (finished) return;
       finished = true;
-      // 单行布局在此刻切换：可见的第一行位置不变，不会跳
-      if (!next) tabsWrap.setAttribute('data-expanded', 'false');
-      bar.style.transition = '';
-      bar.style.height = '';
-      bar.style.overflow = '';
+
+      if (!toExpanded) {
+        // 切成单行：此时首行可见内容不变，新出现的是原先落在第二行的半截按钮
+        tabsWrap.setAttribute('data-expanded', 'false');
+        bar.style.transition = '';
+        bar.style.height = '';
+        bar.style.overflow = '';
+        var entering = tabsInViewport(bar).filter(function (t) {
+          return rowOneBefore.indexOf(t) === -1;
+        });
+        if (entering.length) fadeTabs(entering, 0, 1, 180);
+        setTimeout(function () {
+          clearTabOpacity(bar);
+        }, 200);
+      } else {
+        bar.style.transition = '';
+        bar.style.height = '';
+        bar.style.overflow = '';
+        clearTabOpacity(bar);
+      }
+
       updateTabsLayout();
-      if (!next) scrollActiveIntoView();
+      if (!toExpanded) scrollActiveIntoView();
     };
 
     var onEnd = function (e) {

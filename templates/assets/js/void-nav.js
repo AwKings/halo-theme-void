@@ -87,12 +87,25 @@
       t.classList.toggle('active', t === tab);
     });
     applyFilter();
+    // 把选中的分类按钮横向滚到可见区域
+    var bar = document.getElementById('nav-tabs');
+    if (bar && bar.scrollWidth > bar.clientWidth) {
+      var target = tab.offsetLeft - bar.clientWidth / 2 + tab.offsetWidth / 2;
+      bar.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+    }
     // 切换分类时回到列表顶部，避免停在页面中间
     var tabsTop = document.getElementById('nav-tabs');
     if (tabsTop) {
       var offset = tabsTop.getBoundingClientRect().top + window.scrollY;
       if (window.scrollY > offset) window.scrollTo({ top: offset, behavior: 'smooth' });
     }
+  }
+
+  /* 分类不多时按钮条居中，超出时左对齐并可横向滚动 */
+  function updateTabsLayout() {
+    var bar = document.getElementById('nav-tabs');
+    if (!bar) return;
+    bar.setAttribute('data-compact', bar.scrollWidth <= bar.clientWidth + 1 ? 'true' : 'false');
   }
 
   tabs.forEach(function (tab) {
@@ -156,4 +169,6 @@
   })[0];
   if (allTab) selectTab(allTab);
   else applyFilter();
+  updateTabsLayout();
+  window.addEventListener('resize', updateTabsLayout);
 })();

@@ -91,8 +91,8 @@ header .container nav.nav-minimal a.brand {
 
 .nav-tabs {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
   gap: 0.5rem;
   margin-bottom: 2.5rem;
   position: sticky;
@@ -100,6 +100,24 @@ header .container nav.nav-minimal a.brand {
   z-index: 2;
   padding: 0.7rem 0;
   background: #fff;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+}
+
+.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* 分类少时仍然居中 */
+.nav-tabs[data-compact="true"] {
+  justify-content: center;
+}
+
+.nav-tab {
+  flex: 0 0 auto;
 }
 
 .theme-dark .nav-tabs {

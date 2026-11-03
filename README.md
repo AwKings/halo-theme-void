@@ -4,7 +4,7 @@
 
 - 仓库：<https://github.com/AwKings/halo-theme-void>
 - 说明与更新记录：<https://blog.sanmizu.com/archives/halo-theme-void>
-- 原主题作者：熊猫小A（<https://blog.imalan.cn>）；移植：awking
+- 原主题作者：熊猫小A（<https://blog.imalan.cn>）；移植：AwKings
 - 运行要求：Halo `>= 2.20`
 
 本文只讲怎么用；功能清单、与原版的实现差异见上面那篇文章。

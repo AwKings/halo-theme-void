@@ -5,9 +5,9 @@ metadata:
 spec:
   displayName: VOID
   author:
-    name: awking
+    name: AwKings
   description: >-
-    VOID（无类型）主题的 Halo 移植版，移植者 awking。原主题为 Typecho 主题
+    VOID（无类型）主题的 Halo 移植版，移植者 AwKings。原主题为 Typecho 主题
     Typecho-Theme-VOID（原作者：熊猫小A，https://blog.imalan.cn），采用双栏瀑布流首页、沉浸式头图与极简排版。
   logo: ""
   homepage: https://blog.sanmizu.com/archives/halo-theme-void

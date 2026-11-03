@@ -33,6 +33,7 @@
               th:each="g, gs : ${theme.config.nav != null ? theme.config.nav.groups : null}"
               class="nav-tab"
               th:attr="data-group=${gs.index}"
+              th:title="${g.name}"
               th:text="${g.name}"
             ></button>
           </nav>

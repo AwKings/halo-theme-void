@@ -89,17 +89,29 @@ header .container nav.nav-minimal a.brand {
 
 /* ---------- 分组锚点 ---------- */
 
-.nav-tabs {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  gap: 0.5rem;
-  margin-bottom: 2.5rem;
+.nav-tabs-wrap {
   position: sticky;
   top: var(--nav-sticky-top, 70px);
   z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
   padding: 0.7rem 0;
   background: #fff;
+}
+
+.theme-dark .nav-tabs-wrap {
+  background: #1a1a1a;
+}
+
+.nav-tabs {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 0.5rem;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -116,12 +128,68 @@ header .container nav.nav-minimal a.brand {
   justify-content: center;
 }
 
-.nav-tab {
-  flex: 0 0 auto;
+/* 展开态：换行显示全部分类 */
+.nav-tabs-wrap[data-expanded="true"] .nav-tabs {
+  flex-wrap: wrap;
+  overflow-x: visible;
+  justify-content: flex-start;
 }
 
-.theme-dark .nav-tabs {
-  background: #1a1a1a;
+.nav-tabs-wrap[data-expanded="true"] .nav-tabs[data-compact="true"] {
+  justify-content: center;
+}
+
+.nav-tabs-expand {
+  flex: 0 0 auto;
+  display: none;
+  align-items: center;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  color: rgba(0, 0, 0, 0.55);
+  background: none;
+  border: solid 2px rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) all;
+}
+
+.nav-tabs-expand[data-visible="true"] {
+  display: inline-flex;
+}
+
+.nav-tabs-expand:hover {
+  color: rgba(0, 0, 0, 0.86);
+  border-color: rgba(0, 0, 0, 0.86);
+}
+
+.nav-tabs-expand:focus {
+  outline: none;
+}
+
+.nav-tabs-expand:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.3);
+  outline-offset: 2px;
+}
+
+.theme-dark .nav-tabs-expand {
+  color: #b0b0b0;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-dark .nav-tabs-expand:hover {
+  color: #dfdfdf;
+  border-color: #dfdfdf;
+}
+
+.nav-tab {
+  flex: 0 0 auto;
 }
 
 .nav-tabs:empty {
@@ -433,12 +501,15 @@ header .container nav.nav-minimal a.brand {
     font-size: 1.3rem;
   }
 
-  .nav-tabs {
+  .nav-tabs-wrap {
     top: var(--nav-sticky-top, 56px);
+    padding: 0.7rem 0;
+  }
+
+  .nav-tabs {
     justify-content: flex-start;
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding: 0.7rem 0;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }

@@ -25,16 +25,26 @@
           />
         </div>
 
-        <nav class="nav-tabs" id="nav-tabs">
-          <button type="button" class="nav-tab active" data-group="all">全部</button>
+        <div class="nav-tabs-wrap" id="nav-tabs-wrap">
+          <nav class="nav-tabs" id="nav-tabs">
+            <button type="button" class="nav-tab active" data-group="all">全部</button>
+            <button
+              type="button"
+              th:each="g, gs : ${theme.config.nav != null ? theme.config.nav.groups : null}"
+              class="nav-tab"
+              th:attr="data-group=${gs.index}"
+              th:text="${g.name}"
+            ></button>
+          </nav>
           <button
             type="button"
-            th:each="g, gs : ${theme.config.nav != null ? theme.config.nav.groups : null}"
-            class="nav-tab"
-            th:attr="data-group=${gs.index}"
-            th:text="${g.name}"
-          ></button>
-        </nav>
+            class="nav-tabs-expand"
+            id="nav-tabs-expand"
+            data-visible="false"
+            aria-expanded="false"
+            aria-controls="nav-tabs"
+          >展开</button>
+        </div>
 
         <th:block th:if="${theme.config.nav != null and theme.config.nav.groups != null}">
           <section

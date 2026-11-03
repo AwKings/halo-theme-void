@@ -163,10 +163,33 @@
     if (!next) scrollActiveIntoView();
   }
 
-  /* ---------- 展开/收起时的透明度复位 ---------- */
+  /* ---------- 半截按钮的定向擦除 ---------- */
 
   function allTabs(bar) {
     return Array.prototype.slice.call(bar.querySelectorAll('.nav-tab'));
+  }
+
+  /* 横跨右边界的按钮（半显示半隐藏） */
+  function tabsAtEdge(bar) {
+    var bb = bar.getBoundingClientRect();
+    return allTabs(bar).filter(function (t) {
+      var r = t.getBoundingClientRect();
+      return r.left < bb.right - 1 && r.right > bb.right + 1;
+    });
+  }
+
+  /* dir: 'out' 从左往右淡出 / 'in' 从右往左淡入 */
+  function wipeTabs(list, dir, ms) {
+    if (!list.length) return;
+    list.forEach(function (t) {
+      t.classList.remove('is-wiping', 'is-wiping-out', 'is-wiping-in');
+      t.classList.add('is-wiping', dir === 'out' ? 'is-wiping-out' : 'is-wiping-in');
+    });
+    setTimeout(function () {
+      list.forEach(function (t) {
+        t.classList.remove('is-wiping', 'is-wiping-out', 'is-wiping-in');
+      });
+    }, ms + 40);
   }
 
   function clearTabOpacity(bar) {
@@ -185,6 +208,18 @@
     if (reduceMotion) {
       setExpanded(next);
       return;
+    }
+
+    // 展开：先把右边缘那颗半截按钮从左往右擦掉，再切布局生长
+    if (next) {
+      var edge = tabsAtEdge(bar);
+      if (edge.length) {
+        wipeTabs(edge, 'out', 140);
+        setTimeout(function () {
+          runTabsTransition(true);
+        }, 140);
+        return;
+      }
     }
 
     runTabsTransition(next);
@@ -234,6 +269,9 @@
         bar.style.transition = '';
         bar.style.height = '';
         bar.style.overflow = '';
+        // 新出现的半截按钮从右往左淡入，与横向滚动并行
+        var edgeIn = tabsAtEdge(bar);
+        if (edgeIn.length) wipeTabs(edgeIn, 'in', 180);
       } else {
         bar.style.transition = '';
         bar.style.height = '';

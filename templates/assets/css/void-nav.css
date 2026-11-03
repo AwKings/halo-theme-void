@@ -223,6 +223,46 @@ header .container nav.nav-minimal a.brand {
   flex: 0 0 auto;
 }
 
+/* 半截按钮的定向擦除：展开从左往右淡出，收起从右往左淡入 */
+.nav-tab.is-wiping {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0 45%, #000 55% 100%);
+  mask-image: linear-gradient(90deg, transparent 0 45%, #000 55% 100%);
+  -webkit-mask-size: 200% 100%;
+  mask-size: 200% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.nav-tab.is-wiping-out {
+  -webkit-animation: nav-tab-wipe-out 140ms linear forwards;
+  animation: nav-tab-wipe-out 140ms linear forwards;
+}
+
+.nav-tab.is-wiping-in {
+  -webkit-animation: nav-tab-wipe-in 180ms linear forwards;
+  animation: nav-tab-wipe-in 180ms linear forwards;
+}
+
+@-webkit-keyframes nav-tab-wipe-out {
+  from { -webkit-mask-position: 100% 0; }
+  to { -webkit-mask-position: 0% 0; }
+}
+
+@keyframes nav-tab-wipe-out {
+  from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+  to { -webkit-mask-position: 0% 0; mask-position: 0% 0; }
+}
+
+@-webkit-keyframes nav-tab-wipe-in {
+  from { -webkit-mask-position: 0% 0; }
+  to { -webkit-mask-position: 100% 0; }
+}
+
+@keyframes nav-tab-wipe-in {
+  from { -webkit-mask-position: 0% 0; mask-position: 0% 0; }
+  to { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+}
+
 .nav-tabs:empty {
   display: none;
 }

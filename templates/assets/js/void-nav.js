@@ -180,23 +180,25 @@
     bar.style.height = start + 'px';
     bar.style.overflow = 'hidden';
 
+    // 先临时切到目标布局量一次自然高度（同帧内还原，不会产生绘制）
     tabsWrap.setAttribute('data-expanded', next ? 'true' : 'false');
-
-    // 先量出新状态下的自然高度（不能用 scrollHeight，收起时会等于当前固定高度）
     bar.style.height = 'auto';
     var target = bar.offsetHeight;
+
+    // 收起：动画期间保持多行布局，让行从底部被裁掉；动画结束再切成单行
+    if (!next) tabsWrap.setAttribute('data-expanded', 'true');
+
     bar.style.height = start + 'px';
     void bar.offsetHeight; // 强制重排，确保起始高度生效
 
-    bar.style.transition = 'height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    bar.style.transition = 'height 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
     bar.style.height = target + 'px';
-
-    // 收起时同时把选中的分类滚进视野，和高度动画并行
-    if (!next) scrollActiveIntoView();
 
     var done = function () {
       if (finished) return;
       finished = true;
+      // 单行布局在此刻切换：可见的第一行位置不变，不会跳
+      if (!next) tabsWrap.setAttribute('data-expanded', 'false');
       bar.style.transition = '';
       bar.style.height = '';
       bar.style.overflow = '';
@@ -220,11 +222,33 @@
     expandBtn.addEventListener('click', toggleExpanded);
   }
 
+  /* 与高度动画同节奏的横向滚动（easeOutCubic，0.28s） */
+  function animateScrollLeft(el, to, duration) {
+    var from = el.scrollLeft;
+    var delta = to - from;
+    if (Math.abs(delta) < 1) return;
+    var startTime = null;
+    function step(ts) {
+      if (startTime === null) startTime = ts;
+      var p = Math.min(1, (ts - startTime) / duration);
+      var e = 1 - Math.pow(1 - p, 3);
+      el.scrollLeft = from + delta * e;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
   function scrollTabIntoView(tab) {
     var bar = document.getElementById('nav-tabs');
     if (!bar || isExpanded() || bar.scrollWidth <= bar.clientWidth) return;
     var target = tab.offsetLeft - bar.clientWidth / 2 + tab.offsetWidth / 2;
-    bar.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+    var maxScroll = bar.scrollWidth - bar.clientWidth;
+    target = Math.max(0, Math.min(maxScroll, target));
+    if (reduceMotion) {
+      bar.scrollLeft = target;
+      return;
+    }
+    animateScrollLeft(bar, target, 280);
   }
 
   tabs.forEach(function (tab) {

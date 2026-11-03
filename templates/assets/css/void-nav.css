@@ -190,10 +190,6 @@ header .container nav.nav-minimal a.brand {
 
 .nav-tab {
   flex: 0 0 auto;
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .nav-tabs:empty {

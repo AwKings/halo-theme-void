@@ -19,8 +19,9 @@
       <th:block th:with="menu=${menuFinder.getPrimary()}">
         <th:block th:if="${menu != null}">
           <th:block th:each="item : ${menu.menuItems}">
+            <!-- 分类下拉判定用 status.href：路由方式添加的菜单项没有 spec.href -->
             <th:block
-              th:with="isCatMenu=${(theme.config.advanced?.category_dropdown ?: true) and item.spec.href != null and #strings.startsWith(item.spec.href, '/categories')}"
+              th:with="catHref=${item.status.href ?: ''}, isCatMenu=${(theme.config.advanced?.category_dropdown ?: true) and (catHref == '/categories' or catHref == '/categories/' or catHref == (site.url ?: '') + '/categories' or catHref == (site.url ?: '') + '/categories/' or #strings.startsWith(catHref, '/categories?') or #strings.startsWith(catHref, '/categories#'))}"
             >
               <!-- 一级菜单指向分类页：悬浮展开全部分类 -->
               <span class="dropdown" th:if="${isCatMenu}">
@@ -117,49 +118,64 @@
     <nav>
       <th:block th:with="menu=${menuFinder.getPrimary()}">
         <th:block th:if="${menu != null}">
-          <a
-            th:each="item : ${menu.menuItems}"
-            th:if="${(item.children == null or #lists.isEmpty(item.children)) and !((theme.config.advanced?.category_dropdown ?: true) and item.spec.href != null and #strings.startsWith(item.spec.href, '/categories'))}"
-            th:href="@{${item.status.href}}"
-            th:text="${item.status.displayName}"
-            th:target="${item.spec.target?.value}"
-          ></a>
+          <th:block th:each="item : ${menu.menuItems}">
+            <th:block
+              th:with="catHref=${item.status.href ?: ''}, isCatMenu=${(theme.config.advanced?.category_dropdown ?: true) and (catHref == '/categories' or catHref == '/categories/' or catHref == (site.url ?: '') + '/categories' or catHref == (site.url ?: '') + '/categories/' or #strings.startsWith(catHref, '/categories?') or #strings.startsWith(catHref, '/categories#'))}"
+            >
+              <a
+                th:if="${(item.children == null or #lists.isEmpty(item.children)) and !isCatMenu}"
+                th:href="@{${item.status.href}}"
+                th:text="${item.status.displayName}"
+                th:target="${item.spec.target?.value}"
+              ></a>
+            </th:block>
+          </th:block>
         </th:block>
       </th:block>
     </nav>
   </section>
 
   <!-- 指向分类页的一级菜单：手机端作为分组标题，列出全部分类 -->
-  <section
-    th:each="item : ${menuFinder.getPrimary()?.menuItems}"
-    th:if="${(theme.config.advanced?.category_dropdown ?: true) and item.spec.href != null and #strings.startsWith(item.spec.href, '/categories')}"
-    th:attr="data-title=${item.status.displayName}"
-    class="nav-mobile-group"
-  >
-    <nav>
-      <a
-        th:each="cat : ${categoryFinder.listAll()}"
-        th:href="@{${cat.status.permalink}}"
-        th:text="${cat.spec.displayName}"
-      ></a>
-    </nav>
-  </section>
+  <th:block th:each="item : ${menuFinder.getPrimary()?.menuItems}">
+    <th:block
+      th:with="catHref=${item.status.href ?: ''}, isCatMenu=${(theme.config.advanced?.category_dropdown ?: true) and (catHref == '/categories' or catHref == '/categories/' or catHref == (site.url ?: '') + '/categories' or catHref == (site.url ?: '') + '/categories/' or #strings.startsWith(catHref, '/categories?') or #strings.startsWith(catHref, '/categories#'))}"
+    >
+      <section
+        th:if="${isCatMenu}"
+        th:attr="data-title=${item.status.displayName}"
+        class="nav-mobile-group"
+      >
+        <nav>
+          <a
+            th:each="cat : ${categoryFinder.listAll()}"
+            th:href="@{${cat.status.permalink}}"
+            th:text="${cat.spec.displayName}"
+          ></a>
+        </nav>
+      </section>
+    </th:block>
+  </th:block>
 
   <!-- 一级菜单带子项：一级作标题，子项列在标题下方 -->
-  <section
-    th:each="item : ${menuFinder.getPrimary()?.menuItems}"
-    th:if="${item.children != null and !#lists.isEmpty(item.children) and !((theme.config.advanced?.category_dropdown ?: true) and item.spec.href != null and #strings.startsWith(item.spec.href, '/categories'))}"
-    th:attr="data-title=${item.status.displayName}"
-    class="nav-mobile-group"
-  >
-    <nav>
-      <a
-        th:each="child : ${item.children}"
-        th:href="@{${child.status.href}}"
-        th:text="${child.status.displayName}"
-        th:target="${child.spec.target?.value}"
-      ></a>
-    </nav>
-  </section>
+  <th:block th:each="item : ${menuFinder.getPrimary()?.menuItems}">
+    <th:block
+      th:with="catHref=${item.status.href ?: ''}, isCatMenu=${(theme.config.advanced?.category_dropdown ?: true) and (catHref == '/categories' or catHref == '/categories/' or catHref == (site.url ?: '') + '/categories' or catHref == (site.url ?: '') + '/categories/' or #strings.startsWith(catHref, '/categories?') or #strings.startsWith(catHref, '/categories#'))}"
+    >
+      <section
+        th:if="${item.children != null and !#lists.isEmpty(item.children) and !isCatMenu}"
+        th:attr="data-title=${item.status.displayName}"
+        class="nav-mobile-group"
+      >
+        <nav>
+          <a
+            th:each="child : ${item.children}"
+            th:href="@{${child.status.href}}"
+            th:text="${child.status.displayName}"
+            th:target="${child.spec.target?.value}"
+          ></a>
+        </nav>
+      </section>
+    </th:block>
+  </th:block>
 </div>
 </th:block>

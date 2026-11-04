@@ -19,27 +19,43 @@
       <th:block th:with="menu=${menuFinder.getPrimary()}">
         <th:block th:if="${menu != null}">
           <th:block th:each="item : ${menu.menuItems}">
-            <span
-              class="dropdown"
-              th:if="${item.children != null and !#lists.isEmpty(item.children)}"
+            <th:block
+              th:with="isCatMenu=${#strings.equals(item.status.displayName, theme.config.advanced?.category_menu ?: '')}"
             >
-              <span class="dropdown-label" th:text="${item.status.displayName}"></span>
-              <ul>
-                <li th:each="child : ${item.children}">
-                  <a
-                    th:href="@{${child.status.href}}"
-                    th:text="${child.status.displayName}"
-                    th:target="${child.spec.target?.value}"
-                  ></a>
-                </li>
-              </ul>
-            </span>
-            <a
-              th:if="${item.children == null or #lists.isEmpty(item.children)}"
-              th:href="@{${item.status.href}}"
-              th:text="${item.status.displayName}"
-              th:target="${item.spec.target?.value}"
-            ></a>
+              <!-- 被指定为分类下拉的一级菜单：悬浮展开全部分类 -->
+              <span class="dropdown" th:if="${isCatMenu}">
+                <span class="dropdown-label" th:text="${item.status.displayName}"></span>
+                <ul>
+                  <li>
+                    <a th:href="@{${item.status.href}}" th:text="|全部分类|"></a>
+                  </li>
+                  <li th:each="cat : ${categoryFinder.listAll()}">
+                    <a th:href="@{${cat.status.permalink}}" th:text="${cat.spec.displayName}"></a>
+                  </li>
+                </ul>
+              </span>
+              <span
+                class="dropdown"
+                th:if="${!isCatMenu and item.children != null and !#lists.isEmpty(item.children)}"
+              >
+                <span class="dropdown-label" th:text="${item.status.displayName}"></span>
+                <ul>
+                  <li th:each="child : ${item.children}">
+                    <a
+                      th:href="@{${child.status.href}}"
+                      th:text="${child.status.displayName}"
+                      th:target="${child.spec.target?.value}"
+                    ></a>
+                  </li>
+                </ul>
+              </span>
+              <a
+                th:if="${!isCatMenu and (item.children == null or #lists.isEmpty(item.children))}"
+                th:href="@{${item.status.href}}"
+                th:text="${item.status.displayName}"
+                th:target="${item.spec.target?.value}"
+              ></a>
+            </th:block>
           </th:block>
         </th:block>
       </th:block>
@@ -104,7 +120,7 @@
         <th:block th:if="${menu != null}">
           <a
             th:each="item : ${menu.menuItems}"
-            th:if="${item.children == null or #lists.isEmpty(item.children)}"
+            th:if="${(item.children == null or #lists.isEmpty(item.children)) and !#strings.equals(item.status.displayName, theme.config.advanced?.category_menu ?: '')}"
             th:href="@{${item.status.href}}"
             th:text="${item.status.displayName}"
             th:target="${item.spec.target?.value}"
@@ -114,10 +130,26 @@
     </nav>
   </section>
 
+  <!-- 被指定为分类下拉的一级菜单：手机端作为分组标题，列出全部分类 -->
+  <section
+    th:each="item : ${menuFinder.getPrimary()?.menuItems}"
+    th:if="${#strings.equals(item.status.displayName, theme.config.advanced?.category_menu ?: '')}"
+    th:attr="data-title=${item.status.displayName}"
+    class="nav-mobile-group"
+  >
+    <nav>
+      <a
+        th:each="cat : ${categoryFinder.listAll()}"
+        th:href="@{${cat.status.permalink}}"
+        th:text="${cat.spec.displayName}"
+      ></a>
+    </nav>
+  </section>
+
   <!-- 一级菜单带子项：一级作标题，子项列在标题下方 -->
   <section
     th:each="item : ${menuFinder.getPrimary()?.menuItems}"
-    th:if="${item.children != null and !#lists.isEmpty(item.children)}"
+    th:if="${item.children != null and !#lists.isEmpty(item.children) and !#strings.equals(item.status.displayName, theme.config.advanced?.category_menu ?: '')}"
     th:attr="data-title=${item.status.displayName}"
     class="nav-mobile-group"
   >

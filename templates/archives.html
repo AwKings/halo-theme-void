@@ -43,6 +43,19 @@
         </div>
 
         <div class="wrapper container narrow">
+          <div class="tag-cloud yue float-up">
+            <h2>标签</h2>
+            <a
+              th:each="tag : ${tagFinder.listAll()}"
+              th:if="${tag.postCount > 0}"
+              rel="tag"
+              class="tag-item"
+              th:href="@{${tag.status.permalink}}"
+              th:title="|${tag.postCount} 个话题|"
+              th:text="${tag.spec.displayName}"
+            ></a>
+            <p th:if="${#lists.isEmpty(tagFinder.listAll())}">还没有标签哦～</p>
+          </div>
           <section id="archive-list" class="yue float-up">
             <th:block th:each="archive, iter : ${archives.items}">
               <th:block th:with="count=${#aggregates.sum(archive.months.![#lists.size(posts)])}">

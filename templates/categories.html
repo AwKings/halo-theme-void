@@ -19,7 +19,7 @@
             $('body>header').addClass('force-dark').addClass('no-banner');
           </script>
           <div class="banner-title">
-            <h1 class="post-title">Categories</h1>
+            <h1 class="post-title">分类</h1>
             <p class="post-meta">
               <span th:text="|${#lists.size(categories)} 个分类|"></span>
             </p>
@@ -27,22 +27,22 @@
         </div>
 
         <div class="wrapper container narrow">
-          <div class="tag-cloud yue float-up">
+          <div class="cat-grid float-up">
             <th:block th:each="cat : ${categories}">
-              <a
-                class="tag-item"
-                th:href="@{${cat.status.permalink}}"
-                th:title="|${cat.postCount} 篇文章|"
-                th:text="|${cat.spec.displayName} (${cat.postCount})|"
-              ></a>
+              <a class="cat-card" th:href="@{${cat.status.permalink}}" th:title="|${cat.postCount} 篇文章|">
+                <span class="cat-name" th:text="${cat.spec.displayName}"></span>
+                <span class="cat-count" th:text="|${cat.postCount}|"></span>
+              </a>
               <th:block th:if="${cat.children != null and !#lists.isEmpty(cat.children)}">
                 <a
                   th:each="child : ${cat.children}"
-                  class="tag-item"
+                  class="cat-card cat-card-child"
                   th:href="@{${child.status.permalink}}"
                   th:title="|${child.postCount} 篇文章|"
-                  th:text="|${child.spec.displayName} (${child.postCount})|"
-                ></a>
+                >
+                  <span class="cat-name" th:text="${child.spec.displayName}"></span>
+                  <span class="cat-count" th:text="|${child.postCount}|"></span>
+                </a>
               </th:block>
             </th:block>
             <p th:if="${#lists.isEmpty(categories)}">还没有分类哦～</p>

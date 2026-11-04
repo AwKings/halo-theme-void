@@ -402,3 +402,85 @@ body.theme-dark header .container nav span.dropdown.toggle span::before {
         box-shadow: 0 0 100px 15px #F4F6AD;
     }
 }
+
+/* 文章卡片：字数统计 */
+.post-meta-index .word-count {
+    margin-left: .5rem;
+}
+
+/* 标签页与归档页的标签云 */
+main .wrapper .tag-cloud h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 2rem 0 1rem;
+}
+
+main .wrapper .tag-cloud .tag-item sup {
+    font-size: .7em;
+    margin-left: 1px;
+    opacity: .45;
+    top: -.5em;
+}
+
+/* 分类列表页：直角卡片 */
+.cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: .8rem;
+    margin: 2rem 0 4rem;
+}
+
+.cat-grid > p {
+    grid-column: 1 / -1;
+    opacity: .6;
+}
+
+.cat-card {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .8rem 1rem;
+    border: 1px solid rgb(0 0 0 / 14%);
+    border-radius: 0;
+    transition: .25s cubic-bezier(.25, .46, .45, .94) border-color, .25s cubic-bezier(.25, .46, .45, .94) color;
+}
+
+.cat-card:hover,
+.cat-card:focus {
+    border-color: rgb(0 0 0 / 86%);
+    color: #bd6262;
+}
+
+.cat-card .cat-name {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cat-card .cat-count {
+    font-size: .85rem;
+    opacity: .45;
+}
+
+.cat-card-child {
+    padding-left: 1.6rem;
+    border-style: dashed;
+}
+
+.theme-dark .cat-card {
+    border-color: rgb(255 255 255 / 16%);
+}
+
+.theme-dark .cat-card:hover,
+.theme-dark .cat-card:focus {
+    border-color: rgb(255 255 255 / 80%);
+    color: #bd6262;
+}
+
+@media screen and (max-width: 767px) {
+    .cat-grid {
+        grid-template-columns: 1fr;
+    }
+}

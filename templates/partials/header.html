@@ -17,28 +17,24 @@
 
       <a class="brand" th:href="@{/}" th:text="${theme.config.basic?.brand_name ?: site.title}">VOID</a>
 
-      <a
-        role="button"
-        aria-label="搜索"
-        id="nav-toggle-search"
-        class="nav-head-btn nav-mobile-only"
-        target="_self"
-        href="javascript:void(0);"
-      >
-        <i class="voidicon-search"></i>
-      </a>
-
-      <a
-        role="button"
+      <button
+        type="button"
         aria-label="设置"
         id="nav-toggle-setting"
         class="nav-head-btn nav-mobile-only"
-        target="_self"
-        href="javascript:void(0);"
         onclick="VOID_Ui.toggleSettingPanel();"
       >
         <i class="voidicon-cog"></i>
-      </a>
+      </button>
+
+      <button
+        type="button"
+        aria-label="搜索"
+        id="nav-toggle-search"
+        class="nav-head-btn nav-mobile-only"
+      >
+        <i class="voidicon-search"></i>
+      </button>
     </nav>
   </div>
 </header>
@@ -46,14 +42,14 @@
 <div id="nav-mobile" class="nav-mobile-drawer">
   <section id="nav-categories" data-title="分类">
     <nav>
-      <a class="nav-mobile-cat active" data-group="all" href="javascript:void(0);">全部</a>
-      <a
+      <button type="button" class="nav-mobile-cat active" data-group="all">全部</button>
+      <button
+        type="button"
         class="nav-mobile-cat"
-        href="javascript:void(0);"
         th:each="g, gs : ${theme.config.nav != null ? theme.config.nav.groups : null}"
-        th:attr="data-group=${gs.index}"
+        th:attr="data-group=${gs.index},data-target=|#nav-group-${gs.index}|"
         th:text="${g.name}"
-      ></a>
+      ></button>
     </nav>
   </section>
 </div>

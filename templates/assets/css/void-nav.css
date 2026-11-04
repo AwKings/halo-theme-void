@@ -565,7 +565,7 @@ header .container nav.nav-minimal a.brand {
 /* ---------- 移动端头部按钮与分类抽屉（桌面端完全不出现） ---------- */
 
 /* 需要盖过 void.css 里 `header .container nav a { display: flex }` 的优先级 */
-header .container nav a.nav-mobile-only,
+header .container nav .nav-mobile-only,
 .nav-mobile-drawer {
   display: none;
 }
@@ -585,39 +585,45 @@ header .container nav a.nav-mobile-only,
     font-size: 1.3rem;
   }
 
-  /* 左上角汉堡：与 VOID 一致（三道杠，点开旋转成 X），命中区占满头部高度 */
+  /* 左上角汉堡：尺寸与位置对齐 VOID 实测（19×50，左边缘贴容器） */
   header .container nav.nav-minimal a.toggle.nav-mobile-only {
     display: flex;
     position: absolute;
-    left: -0.4rem;
+    left: 0;
     top: 0;
+    width: 1.2rem;
     height: 100%;
-    width: 2rem;
     align-items: center;
     justify-content: center;
-    padding: 0;
+    padding: 0.3rem 0.55rem;
   }
 
-  /* 右上角：搜索 + 设置，与 VOID 实测位置一致（设置贴右边缘，搜索在其左侧） */
+  /* 右上角：齿轮在左、搜索在右，字号 1.4rem、49×50，全部对齐 VOID 实测 */
   header .container nav.nav-minimal .nav-head-btn {
     display: flex;
     position: absolute;
     top: 0;
     height: 100%;
-    width: 3rem;
+    width: 3.0625rem;
+    padding: 0.3rem 0.55rem;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    font-size: 1.05rem;
+    font-size: 1.4rem;
+    line-height: 1;
     color: inherit;
-  }
-
-  header .container nav.nav-minimal #nav-toggle-search {
-    right: 2.25rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   header .container nav.nav-minimal #nav-toggle-setting {
-    right: -0.6rem;
+    right: 2.875rem;
+  }
+
+  header .container nav.nav-minimal #nav-toggle-search {
+    right: 1px;
   }
 
   /* 搜索栏默认收起，点右上角搜索图标后从头部下方滑出 */
@@ -666,25 +672,30 @@ header .container nav a.nav-mobile-only,
     flex-flow: row wrap;
   }
 
-  #nav-mobile section#nav-categories nav a.nav-mobile-cat {
+  #nav-mobile section#nav-categories nav .nav-mobile-cat {
     display: block;
     width: 50%;
     text-align: left;
-    line-height: 2.6;
     padding: 0 0.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     opacity: 0.75;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 2.6;
+    cursor: pointer;
     transition: 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) opacity;
   }
 
-  #nav-mobile section#nav-categories nav a.nav-mobile-cat:hover,
-  #nav-mobile section#nav-categories nav a.nav-mobile-cat.active {
+  #nav-mobile section#nav-categories nav .nav-mobile-cat:hover,
+  #nav-mobile section#nav-categories nav .nav-mobile-cat.active {
     opacity: 1;
   }
 
-  #nav-mobile section#nav-categories nav a.nav-mobile-cat.active {
+  #nav-mobile section#nav-categories nav .nav-mobile-cat.active {
     color: #bd6262 !important;
   }
 

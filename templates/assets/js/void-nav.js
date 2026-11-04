@@ -369,14 +369,35 @@
     }
   }
 
+  /* 移动端分类是锚点导航，不做筛选 */
+  function jumpToGroup(g) {
+    // 有搜索词时先清空，保证目标分组一定可见
+    if (input && input.value) {
+      input.value = '';
+      applyFilter();
+    }
+    var target =
+      g === 'all'
+        ? document.querySelector('.nav-wrapper')
+        : document.getElementById('nav-group-' + g);
+    if (!target) return;
+    var header = document.querySelector('body > header');
+    var offset = (header ? header.getBoundingClientRect().height : 0) + 12;
+    var top = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? 'auto' : 'smooth' });
+    if (window.history && history.replaceState) {
+      history.replaceState(null, '', g === 'all' ? location.pathname : '#nav-group-' + g);
+    }
+  }
+
   drawerCats.forEach(function (item) {
     item.addEventListener('click', function () {
-      var g = item.getAttribute('data-group');
-      var tab = tabs.filter(function (t) {
-        return t.getAttribute('data-group') === g;
-      })[0];
+      var g = item.getAttribute('data-group') || 'all';
+      drawerCats.forEach(function (d) {
+        d.classList.toggle('active', d === item);
+      });
       closeMobileDrawer();
-      if (tab) selectTab(tab);
+      jumpToGroup(g);
     });
   });
 
@@ -454,5 +475,17 @@
   if (tabsBarEl) {
     tabsBarEl.addEventListener('scroll', updateTabsFade, { passive: true });
   }
-  window.addEventListener('resize', updateTabsLayout);
+  window.addEventListener('resize', function () {
+    updateTabsLayout();
+    // 从桌面窄窗口切到移动端时，恢复「全部」，移动端不做分类筛选
+    if (isMobileViewport() && activeGroup !== 'all') {
+      var allTab = tabs.filter(function (t) {
+        return t.getAttribute('data-group') === 'all';
+      })[0];
+      if (allTab) selectTab(allTab);
+      drawerCats.forEach(function (d) {
+        d.classList.toggle('active', d.getAttribute('data-group') === 'all');
+      });
+    }
+  });
 })();

@@ -9,6 +9,7 @@
   var cards = Array.prototype.slice.call(document.querySelectorAll('.nav-card'));
   var groups = Array.prototype.slice.call(document.querySelectorAll('.nav-group'));
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.nav-tab'));
+  var drawerCats = Array.prototype.slice.call(document.querySelectorAll('.nav-mobile-cat'));
   var noResult = document.getElementById('nav-no-result');
 
   if (!cards.length) return;
@@ -92,13 +93,22 @@
     tabs.forEach(function (t) {
       t.classList.toggle('active', t === tab);
     });
+    // 移动端抽屉里的分类同步高亮
+    drawerCats.forEach(function (d) {
+      d.classList.toggle('active', d.getAttribute('data-group') === activeGroup);
+    });
     applyFilter();
     // 把选中的分类按钮横向滚到可见区域
     scrollTabIntoView(tab);
-    // 切换分类时回到列表顶部，避免停在页面中间
-    var tabsTop = document.getElementById('nav-tabs-wrap');
-    if (tabsTop) {
-      var offset = tabsTop.getBoundingClientRect().top + window.scrollY;
+    // 切换分类时回到列表顶部：桌面滚到分类条，移动端分类条不显示则滚到当前分组
+    var anchor = document.getElementById('nav-tabs-wrap');
+    if (!anchor || !anchor.offsetHeight) {
+      anchor =
+        document.querySelector('.nav-group[data-group="' + activeGroup + '"]') ||
+        document.querySelector('.nav-group');
+    }
+    if (anchor) {
+      var offset = anchor.getBoundingClientRect().top + window.scrollY;
       if (window.scrollY > offset) window.scrollTo({ top: offset, behavior: 'smooth' });
     }
     // 仅移动端：分类卡片处于展开态时，选中后自动收起
@@ -349,6 +359,39 @@
     });
   });
 
+  /* ---------- 移动端：分类抽屉 ---------- */
+
+  /* 关闭抽屉走 VOID 自己的关闭路径（旋转回汉堡、淡出、解除滚动锁定） */
+  function closeMobileDrawer() {
+    var toggle = document.querySelector('header .toggle');
+    if (toggle && toggle.classList.contains('pushed') && window.VOID_Ui && VOID_Ui.toggleNav) {
+      VOID_Ui.toggleNav(toggle);
+    }
+  }
+
+  drawerCats.forEach(function (item) {
+    item.addEventListener('click', function () {
+      var g = item.getAttribute('data-group');
+      var tab = tabs.filter(function (t) {
+        return t.getAttribute('data-group') === g;
+      })[0];
+      closeMobileDrawer();
+      if (tab) selectTab(tab);
+    });
+  });
+
+  /* ---------- 移动端：搜索面板 ---------- */
+
+  var searchBox = document.querySelector('.nav-search');
+  var searchToggle = document.getElementById('nav-toggle-search');
+
+  if (searchToggle && searchBox) {
+    searchToggle.addEventListener('click', function () {
+      var opened = searchBox.classList.toggle('opened');
+      if (opened && input) input.focus();
+    });
+  }
+
   /* ---------- 搜索框 ---------- */
 
   if (input) {
@@ -365,6 +408,7 @@
         input.value = '';
         applyFilter();
         input.blur();
+        if (searchBox) searchBox.classList.remove('opened');
       }
     });
   }

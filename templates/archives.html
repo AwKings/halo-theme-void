@@ -36,15 +36,15 @@
             <p class="post-meta">
               <span
                 th:with="stats=${siteStatsFinder.getStats()}"
-                th:text="|${stats.post} 文章 × ${stats.category} 分类 × ${stats.comment} 评论|"
+                th:text="|${stats.category} 分类 × ${stats.post} 文章 × ${#lists.size(tagFinder.listAll().?[postCount > 0])} 标签 × ${#aggregates.sum(postFinder.listAll().![#conversions.convert(#annotations.getOrDefault(#this, 'void_words', '0'), 'java.lang.Integer')])} 字|"
               ></span>
             </p>
           </div>
         </div>
 
         <div class="wrapper container narrow">
-          <div class="tag-cloud yue float-up">
-            <h2>标签</h2>
+          <div class="tag-cloud archive-tag-cloud yue float-up">
+            <h2>Tags</h2>
             <a
               th:each="tag : ${tagFinder.listAll()}"
               th:if="${tag.postCount > 0}"
@@ -60,7 +60,7 @@
             <th:block th:each="archive, iter : ${archives.items}">
               <th:block th:with="count=${#aggregates.sum(archive.months.![#lists.size(posts)])}">
                 <h2>
-                  <span th:text="${archive.year}"></span>
+                  <span class="archive-year-title" th:text="${archive.year}"></span>
                   <span class="num-posts" th:text="|${count} 篇|"></span>
                   <a
                     no-pjax
@@ -80,12 +80,29 @@
                 <ul>
                   <th:block th:each="month : ${archive.months}">
                     <li th:each="post : ${month.posts}">
-                      <a class="archive-title" th:href="@{${post.status.permalink}}">
+                      <a
+                        class="archive-title show-word-count"
+                        th:attr="data-words=${#annotations.getOrDefault(post, 'void_words', '0')}"
+                        th:href="@{${post.status.permalink}}"
+                      >
                         <span
                           class="date"
                           th:text="${#temporals.format(post.spec.publishTime, 'MM-dd')}"
                         ></span><span th:text="${post.spec.title}"></span>
                       </a>
+                      <span
+                        class="archive-categories"
+                        th:if="${post.spec.categories != null and !#lists.isEmpty(post.spec.categories)}"
+                      >
+                        <th:block th:each="cat : ${categoryFinder.listAll()}">
+                          <a
+                            th:if="${post.spec.categories.contains(cat.metadata.name)}"
+                            class="archive-category-tag"
+                            th:href="@{${cat.status.permalink}}"
+                            th:text="${cat.spec.displayName}"
+                          ></a>
+                        </th:block>
+                      </span>
                     </li>
                   </th:block>
                 </ul>

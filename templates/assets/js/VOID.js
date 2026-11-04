@@ -19,6 +19,44 @@ var VOID_Content = {
         }
     },
 
+    // 归档页：给年份标题生成悬停提示（约 N 字 + 当年各分类的文章数）
+    archiveTooltips: function () {
+        var $list = $('#archive-list');
+        if (!$list.length) return;
+        $list.find('.archive-year-title').each(function () {
+            var $title = $(this);
+            var $section = $title.closest('h2').next('section.year');
+            if (!$section.length) return;
+
+            var words = 0;
+            $section.find('a.archive-title').each(function () {
+                var w = parseInt($(this).attr('data-words'), 10);
+                if (!isNaN(w)) words += w;
+            });
+
+            var cats = [];
+            $section.find('.archive-category-tag').each(function () {
+                var name = $(this).text().trim();
+                for (var i = 0; i < cats.length; i++) {
+                    if (cats[i].name === name) {
+                        cats[i].n++;
+                        return;
+                    }
+                }
+                cats.push({ name: name, n: 1 });
+            });
+
+            var parts = [];
+            if (words > 0) {
+                parts.push(words >= 10000 ? '约 ' + (words / 10000).toFixed(1) + ' 万字' : words + ' 字');
+            }
+            if (cats.length) {
+                parts.push($.map(cats, function (c) { return c.name + '(' + c.n + ')'; }).join('、'));
+            }
+            if (parts.length) $title.attr('data-tooltip', parts.join('，'));
+        });
+    },
+
     // 统计正文字数（中文按字、英文按词），对应 Typecho 插件里 contents.wordCount 字段
     postWordCount: function () {
         var el = document.querySelector('#post .articleBody');
@@ -170,6 +208,7 @@ var VOID = {
         VOID_Ui.headroom();
 
         VOID_Content.countWords();
+        VOID_Content.archiveTooltips();
         VOID_Content.postWordCount();
         VOID_Content.parseTOC();
         VOID_Content.parsePhotos();
@@ -221,6 +260,7 @@ var VOID = {
         
         VOID_Ui.checkScrollTop();
         VOID_Content.countWords();
+        VOID_Content.archiveTooltips();
         VOID_Content.postWordCount();
         VOID_Content.parseTOC();
         VOID_Content.parsePhotos();

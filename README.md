@@ -201,7 +201,7 @@ PUT /apis/api.console.halo.run/v1alpha1/themes/theme-void/invalidate-cache
 | 路径 | 模板 | 说明 |
 | --- | --- | --- |
 | `/` | `index.html` | 首页，瀑布流或单栏 |
-| `/archives` | `archives.html` | 按年份归档，带折叠与标签云，使用「首页与归档页顶部大图」 |
+| `/archives` | `archives.html` | 按年份归档，带折叠、标签云、每篇文章的分类标签与字数，使用「首页与归档页顶部大图」 |
 | `/categories`、`/tags` | `categories.html`、`tags.html` | 分类/标签总览 |
 | `/categories/{slug}`、`/tags/{slug}` | `category.html`、`tag.html` | 单个分类/标签的文章列表 |
 | `/authors/{name}` | `author.html` | 作者页 |

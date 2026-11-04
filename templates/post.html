@@ -109,7 +109,11 @@
                 th:text="${(post.stats?.comment ?: 0) + ' 评论'}"
               ></a>
               &nbsp;•&nbsp;<span th:text="${post.stats.visit + ' 阅读'}"></span>
-              &nbsp;•&nbsp;<span id="post-word-count"></span>
+              <th:block th:with="wordCount=${#annotations.getOrDefault(post, 'void_words', '')}">
+                <th:block th:if="${!#strings.isEmpty(wordCount)}">
+                  &nbsp;•&nbsp;<span id="post-word-count" th:text="|${wordCount} 字|"></span>
+                </th:block>
+              </th:block>
               <th:block sec:authorize="hasRole('super-role')">
                 &nbsp;•&nbsp;<a
                   target="_blank"

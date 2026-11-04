@@ -20,15 +20,12 @@
         <th:block th:if="${menu != null}">
           <th:block th:each="item : ${menu.menuItems}">
             <th:block
-              th:with="isCatMenu=${#strings.equals(item.status.displayName, theme.config.advanced?.category_menu ?: '')}"
+              th:with="isCatMenu=${(theme.config.advanced?.category_dropdown ?: true) and item.spec.href != null and #strings.startsWith(item.spec.href, '/categories')}"
             >
-              <!-- 被指定为分类下拉的一级菜单：悬浮展开全部分类 -->
+              <!-- 一级菜单指向分类页：悬浮展开全部分类 -->
               <span class="dropdown" th:if="${isCatMenu}">
                 <span class="dropdown-label" th:text="${item.status.displayName}"></span>
                 <ul>
-                  <li>
-                    <a th:href="@{${item.status.href}}" th:text="|全部分类|"></a>
-                  </li>
                   <li th:each="cat : ${categoryFinder.listAll()}">
                     <a th:href="@{${cat.status.permalink}}" th:text="${cat.spec.displayName}"></a>
                   </li>
@@ -99,16 +96,18 @@
     </nav>
   </div>
   <div class="mobile-search-form">
-    <label for="search_new">搜索</label>
-    <input
-      onkeydown="VOID.enterSearch(event, this);"
-      type="text"
-      name="search-content"
-      id="search_new"
-      required
-      placeholder="输入内容然后 Go!"
-    />
-    <button onclick="VOID.startSearch('#search_new');">Go!</button>
+    <form class="search-bar" onsubmit="VOID.startSearch('#search_new'); return false;">
+      <i class="voidicon-search"></i>
+      <input
+        onkeydown="VOID.enterSearch(event, this);"
+        type="text"
+        name="search-content"
+        id="search_new"
+        required
+        placeholder="搜索文章标题或摘要…"
+      />
+      <button type="submit">搜索</button>
+    </form>
   </div>
 </header>
 
@@ -120,7 +119,7 @@
         <th:block th:if="${menu != null}">
           <a
             th:each="item : ${menu.menuItems}"
-            th:if="${(item.children == null or #lists.isEmpty(item.children)) and !#strings.equals(item.status.displayName, theme.config.advanced?.category_menu ?: '')}"
+            th:if="${(item.children == null or #lists.isEmpty(item.children)) and !((theme.config.advanced?.category_dropdown ?: true) and item.spec.href != null and #strings.startsWith(item.spec.href, '/categories'))}"
             th:href="@{${item.status.href}}"
             th:text="${item.status.displayName}"
             th:target="${item.spec.target?.value}"
@@ -130,10 +129,10 @@
     </nav>
   </section>
 
-  <!-- 被指定为分类下拉的一级菜单：手机端作为分组标题，列出全部分类 -->
+  <!-- 指向分类页的一级菜单：手机端作为分组标题，列出全部分类 -->
   <section
     th:each="item : ${menuFinder.getPrimary()?.menuItems}"
-    th:if="${#strings.equals(item.status.displayName, theme.config.advanced?.category_menu ?: '')}"
+    th:if="${(theme.config.advanced?.category_dropdown ?: true) and item.spec.href != null and #strings.startsWith(item.spec.href, '/categories')}"
     th:attr="data-title=${item.status.displayName}"
     class="nav-mobile-group"
   >
@@ -149,7 +148,7 @@
   <!-- 一级菜单带子项：一级作标题，子项列在标题下方 -->
   <section
     th:each="item : ${menuFinder.getPrimary()?.menuItems}"
-    th:if="${item.children != null and !#lists.isEmpty(item.children) and !#strings.equals(item.status.displayName, theme.config.advanced?.category_menu ?: '')}"
+    th:if="${item.children != null and !#lists.isEmpty(item.children) and !((theme.config.advanced?.category_dropdown ?: true) and item.spec.href != null and #strings.startsWith(item.spec.href, '/categories'))}"
     th:attr="data-title=${item.status.displayName}"
     class="nav-mobile-group"
   >

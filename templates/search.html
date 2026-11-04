@@ -31,7 +31,7 @@
           th:classappend="${theme.config.basic?.index_style == '1'} ? ' narrow' : ' wide'"
         >
           <section id="index-list" class="float-up">
-            <ul id="masonry"></ul>
+            <ul id="search-list" class="search-list"></ul>
             <div id="search-empty" class="no-post" style="display: none">
               <p>没有找到相关文章，换个关键词试试？</p>
             </div>
@@ -44,7 +44,7 @@
       (function () {
         var keyword = (new URLSearchParams(window.location.search).get('keyword') || '').trim();
         var summary = document.getElementById('search-summary');
-        var list = document.getElementById('masonry');
+        var list = document.getElementById('search-list');
         var empty = document.getElementById('search-empty');
 
         function escapeHtml(text) {
@@ -59,23 +59,38 @@
           return div.textContent || '';
         }
 
+        // 与文章卡片保持一致的日期格式：Nov 2, 2026
+        function formatDate(iso) {
+          if (!iso) return '';
+          var d = new Date(iso);
+          if (isNaN(d.getTime())) return iso.slice(0, 10);
+          var months = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+          ];
+          return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+        }
+
         function card(post) {
           var title = post.spec.title || '';
           var permalink = post.status.permalink;
           var excerpt = post.status.excerpt || '';
-          var date = (post.spec.publishTime || '').slice(0, 10);
+          var publishTime = post.spec.publishTime || '';
+          var words = (post.metadata.annotations || {}).void_words || '';
           var li = document.createElement('li');
           li.id = 'p-' + post.metadata.name;
-          li.className = 'masonry-item style-0';
+          li.className = 'search-item';
           li.innerHTML =
             '<a href="' +
             permalink +
             '"><article class="yue"><div class="content-wrap">' +
             '<div class="post-meta-index"><time datetime="' +
-            date +
+            publishTime +
             '">' +
-            date +
-            '</time></div>' +
+            formatDate(publishTime) +
+            '</time>' +
+            (words ? '<span class="word-count">+ ' + words + ' 字</span>' : '') +
+            '</div>' +
             '<h1 class="title">' +
             escapeHtml(title) +
             '</h1>' +
@@ -116,16 +131,6 @@
             summary.textContent = '共找到 ' + matched.length + ' 篇相关文章';
             if (matched.length === 0) {
               empty.style.display = 'block';
-            }
-            if (window.VOID_Ui) {
-              VOID_Ui.MasonryCtrler.init();
-              matched.forEach(function (post) {
-                try {
-                  VOID_Ui.MasonryCtrler.watch('p-' + post.metadata.name);
-                } catch (e) {
-                  /* ignore */
-                }
-              });
             }
             if (window.VOID_Content) {
               VOID_Content.highlight();

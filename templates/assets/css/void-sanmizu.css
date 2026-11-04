@@ -484,3 +484,119 @@ main .wrapper .tag-cloud .tag-item sup {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== 搜索条（桌面 / 移动共用） ===== */
+header .mobile-search-form {
+  padding: 0.9rem 1.5rem;
+  background: rgba(255, 255, 255, 0.98);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+}
+header .mobile-search-form > label {
+  display: none;
+}
+header .mobile-search-form .search-bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  height: 44px;
+  border: 1px solid rgba(0, 0, 0, 0.86);
+  background: #fff;
+  transition: border-color 0.2s;
+}
+header .mobile-search-form .search-bar:focus-within {
+  border-color: #bd6262;
+}
+header .mobile-search-form .search-bar i {
+  padding: 0 0.5rem 0 0.95rem;
+  font-size: 0.95rem;
+  color: rgba(0, 0, 0, 0.45);
+}
+header .mobile-search-form .search-bar input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0 0.6rem;
+  font-size: 0.92rem;
+  color: #000;
+  border-radius: 0;
+}
+header .mobile-search-form .search-bar input::placeholder {
+  color: #b3b3b3;
+}
+header .mobile-search-form .search-bar button {
+  height: 100%;
+  padding: 0 1.6rem;
+  border: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.86);
+  background: #000;
+  color: #fff;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+header .mobile-search-form .search-bar button:hover {
+  background: #bd6262;
+  border-left-color: #bd6262;
+}
+
+/* ===== 搜索结果列表 ===== */
+#index-list .search-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.6rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#index-list .search-list > li.search-item {
+  width: 100%;
+  opacity: 1;
+  margin: 0;
+  padding-bottom: 0;
+  border: none;
+}
+
+/* ===== 搜索条 / 结果 暗色 ===== */
+body.theme-dark header .mobile-search-form {
+  background: rgba(0, 0, 0, 0.92);
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+body.theme-dark header .mobile-search-form .search-bar {
+  border-color: #ddd;
+  background: #111;
+}
+body.theme-dark header .mobile-search-form .search-bar i {
+  color: rgba(255, 255, 255, 0.5);
+}
+body.theme-dark header .mobile-search-form .search-bar input {
+  color: #eee;
+}
+body.theme-dark header .mobile-search-form .search-bar input::placeholder {
+  color: #888;
+}
+body.theme-dark header .mobile-search-form .search-bar button {
+  background: #eee;
+  color: #111;
+  border-left-color: #ddd;
+}
+body.theme-dark header .mobile-search-form .search-bar button:hover {
+  background: #bd6262;
+  color: #fff;
+  border-left-color: #bd6262;
+}
+
+@media (max-width: 768px) {
+  header .mobile-search-form {
+    padding: 0.7rem 1rem;
+  }
+  #index-list .search-list {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+}

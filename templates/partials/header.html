@@ -97,17 +97,37 @@
 </header>
 
 <div id="nav-mobile">
+  <!-- 一级菜单是链接：直接平铺 -->
   <section id="pages" data-title="PAGES">
     <nav>
       <th:block th:with="menu=${menuFinder.getPrimary()}">
         <th:block th:if="${menu != null}">
           <a
             th:each="item : ${menu.menuItems}"
+            th:if="${item.children == null or #lists.isEmpty(item.children)}"
             th:href="@{${item.status.href}}"
             th:text="${item.status.displayName}"
+            th:target="${item.spec.target?.value}"
           ></a>
         </th:block>
       </th:block>
+    </nav>
+  </section>
+
+  <!-- 一级菜单带子项：一级作标题，子项列在标题下方 -->
+  <section
+    th:each="item : ${menuFinder.getPrimary()?.menuItems}"
+    th:if="${item.children != null and !#lists.isEmpty(item.children)}"
+    th:attr="data-title=${item.status.displayName}"
+    class="nav-mobile-group"
+  >
+    <nav>
+      <a
+        th:each="child : ${item.children}"
+        th:href="@{${child.status.href}}"
+        th:text="${child.status.displayName}"
+        th:target="${child.spec.target?.value}"
+      ></a>
     </nav>
   </section>
   <section id="categories" data-title="CATEGORIES">

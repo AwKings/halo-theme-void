@@ -127,6 +127,11 @@ body:not(.theme-dark) #nav-mobile section {
     width: 100%;
 }
 
+/* 抽屉里第一个分组始终与顶栏留出同样的间距（PAGES 为空时由分组顶上） */
+#nav-mobile > section:first-of-type {
+    margin-top: calc(60px + 1rem);
+}
+
 body:not(.theme-dark) #nav-mobile {
     background: rgb(255 255 255 / 95%);
 }

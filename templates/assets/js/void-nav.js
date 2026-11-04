@@ -26,6 +26,11 @@
   }
   syncStickyOffset();
   window.addEventListener('resize', syncStickyOffset);
+  // 头部高度会随断点/字号变化，用 ResizeObserver 跟随（窗口 resize 时可能还在过渡中）
+  if (window.ResizeObserver) {
+    var headerEl = document.querySelector('body > header');
+    if (headerEl) new ResizeObserver(syncStickyOffset).observe(headerEl);
+  }
 
   /* ---------- 过滤 ---------- */
 
@@ -401,15 +406,65 @@
     });
   });
 
-  /* ---------- 移动端：搜索面板 ---------- */
+  /* ---------- 移动端：搜索面板与三个头部按钮互斥 ---------- */
 
   var searchBox = document.querySelector('.nav-search');
   var searchToggle = document.getElementById('nav-toggle-search');
+  var settingBtn = document.getElementById('nav-toggle-setting');
+  var navToggle = document.querySelector('header .toggle');
 
+  function isSettingOpen() {
+    return document.body.classList.contains('setting-panel-show');
+  }
+
+  function closeSearchPanel() {
+    if (searchBox) searchBox.classList.remove('opened');
+  }
+
+  function closeSettingPanel() {
+    if (isSettingOpen() && window.VOID_Ui && VOID_Ui.toggleSettingPanel) {
+      VOID_Ui.toggleSettingPanel();
+    }
+  }
+
+  /* 汉堡：打开抽屉前先关掉搜索框与设置面板；已打开则关闭 */
+  if (navToggle && window.VOID_Ui && VOID_Ui.toggleNav) {
+    navToggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (navToggle.classList.contains('pushed')) {
+        VOID_Ui.toggleNav(navToggle);
+        return;
+      }
+      closeSearchPanel();
+      closeSettingPanel();
+      VOID_Ui.toggleNav(navToggle);
+    });
+  }
+
+  /* 设置：打开前先关掉搜索框与抽屉 */
+  if (settingBtn && window.VOID_Ui && VOID_Ui.toggleSettingPanel) {
+    settingBtn.addEventListener('click', function () {
+      if (isSettingOpen()) {
+        VOID_Ui.toggleSettingPanel();
+        return;
+      }
+      closeSearchPanel();
+      closeMobileDrawer();
+      VOID_Ui.toggleSettingPanel();
+    });
+  }
+
+  /* 搜索：打开前先关掉抽屉与设置面板 */
   if (searchToggle && searchBox) {
     searchToggle.addEventListener('click', function () {
-      var opened = searchBox.classList.toggle('opened');
-      if (opened && input) input.focus();
+      if (searchBox.classList.contains('opened')) {
+        closeSearchPanel();
+        return;
+      }
+      closeMobileDrawer();
+      closeSettingPanel();
+      searchBox.classList.add('opened');
+      if (input) input.focus();
     });
   }
 

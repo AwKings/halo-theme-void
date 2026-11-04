@@ -731,3 +731,246 @@ body.theme-dark header .mobile-search-form .search-bar button:hover {
 main #post .social-button .btn {
     border-radius: 0;
 }
+
+/* ---------------------------------------------------------------
+   瞬間（plugin-void）：时间轴，卡片沿用首页文章卡片的外观
+   --------------------------------------------------------------- */
+.void-timeline {
+    position: relative;
+    margin: 1rem 0 2rem;
+}
+
+/* 左侧贯穿的轴线 */
+.void-timeline::before {
+    content: "";
+    position: absolute;
+    left: 100px;
+    top: 19px;
+    bottom: 12px;
+    width: 4px;
+    background: rgba(0, 0, 0, 0.86);
+}
+
+.void-timeline__item {
+    position: relative;
+    display: flex;
+    margin-bottom: 2rem;
+}
+
+.void-timeline__item:last-child {
+    margin-bottom: 0;
+}
+
+.void-timeline__time {
+    flex: 0 0 76px;
+    padding: 1rem 24px 0 0;
+    text-align: right;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+.void-timeline__time time {
+    display: block;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.86);
+}
+
+/* 轴线上的圆点 */
+.void-timeline__dot {
+    position: absolute;
+    left: 95px;
+    top: 19px;
+    width: 14px;
+    height: 14px;
+    background: rgba(0, 0, 0, 0.86);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+/* 卡片：与首页文章卡片一致——2px 黑边、直角、无阴影，悬浮只换边框色 */
+.void-timeline__card {
+    flex: 1;
+    min-width: 0;
+    margin-left: 40px;
+    padding: 16px 20px;
+    border: 2px solid rgba(0, 0, 0, 0.86);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    transition: border 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.void-timeline__card:hover {
+    border-color: #bd6262;
+}
+
+.void-timeline__body > *:first-child {
+    margin-top: 0;
+}
+
+.void-timeline__body > *:last-child {
+    margin-bottom: 0;
+}
+
+.void-timeline__images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 6px;
+    margin-top: 0.9rem;
+}
+
+.void-timeline__image {
+    display: block;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    overflow: hidden;
+}
+
+.void-timeline__image img {
+    display: block;
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+}
+
+.void-timeline__actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 14px;
+}
+
+.void-moment-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 13px;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+    transition: color 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.void-moment-action svg {
+    width: 18px;
+    height: 18px;
+}
+
+.void-moment-action:hover {
+    color: #bd6262;
+}
+
+/* 点赞：2px 黑色线条爱心；点赞成功后整颗爱心变成 #BD6262 */
+.void-moment-like {
+    color: rgba(0, 0, 0, 0.86);
+}
+
+.void-moment-like.is-done,
+.void-moment-like.is-done:hover {
+    color: #bd6262;
+}
+
+.void-moment-like.is-done svg {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+/* 评论暂未开放 */
+.void-moment-comment[disabled] {
+    cursor: default;
+    opacity: 0.45;
+}
+
+.void-moment-comment[disabled]:hover {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+/* 转发：与文章页同一套图标按钮 */
+.void-moment-share {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.void-moment-share .void-moment-action {
+    font-size: 15px;
+}
+
+.void-moment-share .void-moment-action i {
+    margin: 0;
+}
+
+.void-timeline__empty {
+    padding: 2rem 0;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+/* ===== 暗色 ===== */
+.theme-dark .void-timeline::before,
+.theme-dark .void-timeline__dot {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.theme-dark .void-timeline__time {
+    color: #8a8a8a;
+}
+
+.theme-dark .void-timeline__time time {
+    color: #dfdfdf;
+}
+
+.theme-dark .void-timeline__card {
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.theme-dark .void-timeline__card:hover {
+    border-color: #bd6262;
+}
+
+.theme-dark .void-timeline__image {
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.theme-dark .void-moment-action,
+.theme-dark .void-moment-like {
+    color: #b0b0b0;
+}
+
+.theme-dark .void-moment-like.is-done,
+.theme-dark .void-moment-like.is-done:hover,
+.theme-dark .void-moment-action:hover {
+    color: #bd6262;
+}
+
+/* ===== 移动端 ===== */
+@media screen and (max-width: 767.5px) {
+    .void-timeline::before,
+    .void-timeline__dot {
+        display: none;
+    }
+
+    .void-timeline__item {
+        display: block;
+        margin-bottom: 1.4rem;
+    }
+
+    .void-timeline__time {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        padding: 0 0 0.5rem;
+        text-align: left;
+    }
+
+    .void-timeline__time time {
+        display: inline;
+    }
+
+    .void-timeline__card {
+        margin-left: 0;
+    }
+}

@@ -745,8 +745,8 @@ main #post .social-button .btn {
     content: "";
     position: absolute;
     left: 150px;
-    top: 7px;
-    bottom: 12px;
+    top: 0;
+    bottom: 0;
     width: 4px;
     background: rgba(0, 0, 0, 0.86);
 }
@@ -786,7 +786,8 @@ main #post .social-button .btn {
 .void-timeline__dot {
     position: absolute;
     left: 145px;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
     width: 14px;
     height: 14px;
     background: rgba(0, 0, 0, 0.86);

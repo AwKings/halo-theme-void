@@ -74,6 +74,7 @@ spec:
                   name: badge
                   label: 角标文字
                   help: "例如「新」「内网」，留空则不显示。"
+
     - group: basic
       label: 基础设置
       formSchema:
@@ -82,21 +83,6 @@ spec:
           label: 左上角站点名
           value: ""
           help: "留空则使用站点标题。"
-        - $formkit: text
-          name: default_banner
-          label: 首页与归档页顶部大图
-          value: ""
-          help: "填写图片地址或随机图 API。留空则不显示头图。"
-        - $formkit: text
-          name: index_banner_title
-          label: 首页顶部大标题
-          value: ""
-          help: "留空则使用站点标题。"
-        - $formkit: text
-          name: index_banner_subtitle
-          label: 首页顶部小标题
-          value: ""
-          help: "留空则使用站点副标题。"
         - $formkit: radio
           name: color_scheme
           label: 主题颜色模式
@@ -109,30 +95,11 @@ spec:
             - label: 夜间模式
               value: "2"
           help: "自动模式下每天 22:00 到次日 06:59 显示为夜间模式。"
-        - $formkit: radio
-          name: index_style
-          label: 首页版式
-          value: "0"
-          options:
-            - label: 双栏瀑布流
-              value: "0"
-            - label: 单栏
-              value: "1"
         - $formkit: text
           name: footer_text
           label: 页脚补充内容
           value: ""
           help: "例如备案号，支持 HTML。"
-        - $formkit: text
-          name: reward
-          label: 打赏二维码
-          value: ""
-          help: "图片地址，仅一张。留空则不显示打赏按钮。"
-        - $formkit: checkbox
-          name: show_upvote
-          label: 显示文章点赞按钮
-          value: true
-          help: "使用 Halo 自带的点赞统计（ENJOY），无需安装插件。"
 
     - group: content
       label: 内容与排版
@@ -146,11 +113,6 @@ spec:
           name: lazyload
           label: 图片懒加载
           value: true
-        - $formkit: checkbox
-          name: enable_math
-          label: 启用数学公式解析
-          value: false
-          help: "会额外加载 MathJax 资源。"
         - $formkit: select
           name: default_font_size
           label: 默认字号
@@ -166,55 +128,10 @@ spec:
               value: "4"
             - label: 22px
               value: "5"
-        - $formkit: checkbox
-          name: use_fira_code
-          label: 代码使用 Fira Code 字体
-          value: false
-          help: "从 Google Fonts 加载 Fira Code。若启用了 shiki 插件的「主题侧渲染」，字体仍会生效。"
-        - $formkit: checkbox
-          name: mac_style_code_block
-          label: Mac 风格代码块
-          value: true
-          help: "代码块顶部加 Mac 窗口样式的圆点与标题栏。shiki 插件接管代码块时只能显示简化版。"
-        - $formkit: checkbox
-          name: line_numbers
-          label: 代码块行号
-          value: true
-          help: "由主题的 Prism 插件生成行号。若启用了 shiki 插件的「主题侧渲染」，代码块会由该插件渲染，行号不生效——请在该插件设置中关闭「启用主题侧渲染」。"
-        - $formkit: checkbox
-          name: parse_figcaption
-          label: 显示图片题注
-          value: true
-        - $formkit: text
-          name: twitter_id
-          label: X（Twitter）用户名
-          help: "分享到 X 时 @ 的账号，不用带 @。留空则用文章作者名。"
-          value: ""
-        - $formkit: text
-          name: weibo_id
-          label: 微博昵称
-          value: ""
-        - $formkit: textarea
-          name: comment_notification
-          label: 评论区提示语
-          value: ""
-          rows: 2
 
     - group: advanced
       label: 高级设置
       formSchema:
-        - $formkit: number
-          name: desktop_banner_height
-          label: 桌面端头图高度（vh）
-          value: 30
-          min: 0
-          max: 100
-        - $formkit: number
-          name: mobile_banner_height
-          label: 移动端头图高度（vh）
-          value: 30
-          min: 0
-          max: 100
         - $formkit: radio
           name: header_mode
           label: 导航栏模式
@@ -244,15 +161,6 @@ spec:
           min: 0
           max: 24
           step: 0.5
-        - $formkit: checkbox
-          name: blured_lazyload
-          label: 模糊懒加载
-          value: false
-          help: "仅对又拍云、七牛云 CDN 图片生效。"
-        - $formkit: checkbox
-          name: browser_level_lazyload
-          label: 浏览器原生懒加载
-          value: false
         - $formkit: text
           name: brand_font_src
           label: 品牌字体地址
@@ -288,27 +196,8 @@ spec:
           value: ""
           help: "文件名，需自行放置于站点根目录，例如 VOIDCacheRule.js。"
         - $formkit: repeater
-          name: more_menu
-          label: 导航栏「更多」菜单
-          value: []
-          max: 20
-          help: "显示在导航栏「分类」之后的下拉菜单。留空则不显示。"
-          children:
-            - $formkit: text
-              name: name
-              label: 名称
-              value: ""
-            - $formkit: text
-              name: href
-              label: 链接
-              value: ""
-            - $formkit: text
-              name: target
-              label: 打开方式
-              value: "_blank"
-        - $formkit: repeater
           name: social_links
-          label: 侧边栏社交链接
+          label: 设置面板里的社交链接
           value: []
           max: 10
           children:
@@ -329,16 +218,3 @@ spec:
               name: target
               label: 打开方式
               value: "_blank"
-
-    - group: seo
-      label: SEO
-      formSchema:
-        - $formkit: checkbox
-          name: enable_metadata
-          label: 输出 canonical 与社交分享标签
-          value: true
-          help: "若已由插件提供，请关闭。"
-        - $formkit: checkbox
-          name: enable_structured_data
-          label: 输出文章结构化数据
-          value: true

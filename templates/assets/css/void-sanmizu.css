@@ -756,29 +756,32 @@ main #post .social-button .btn {
 .void-timeline__item {
     position: relative;
     display: flex;
-    margin-bottom: 2rem;
+    margin-bottom: 2.6rem;
 }
 
 .void-timeline__item:last-child {
     margin-bottom: 0;
 }
 
-/* 每年的第一条瞬間：上方标一个年份 */
-.void-timeline__item.is-year-start:not(:first-child) {
-    margin-top: 2.8rem;
-}
-
+/* 每年的第一条瞬間：年份直接压在竖线上，不占行高 */
 .void-timeline__year {
     position: absolute;
-    left: 0;
-    bottom: 100%;
-    margin-bottom: 0.85rem;
-    width: 130px;
-    text-align: right;
-    font-size: 0.95rem;
+    left: 152px;
+    top: -2.16rem;
+    transform: translateX(-50%);
+    padding: 0 8px;
+    background: #fff;
+    font-size: 1.15rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
     color: rgba(0, 0, 0, 0.86);
+    z-index: 2;
+}
+
+.void-timeline__item.is-year-start:first-child .void-timeline__year {
+    top: -1.95rem;
 }
 
 .void-timeline__time {
@@ -954,6 +957,7 @@ main #post .social-button .btn {
 }
 
 .theme-dark .void-timeline__year {
+    background: #1a1a1a;
     color: #dfdfdf;
 }
 
@@ -1020,14 +1024,13 @@ main #post .social-button .btn {
         display: none;
     }
 
-    .void-timeline__item.is-year-start:not(:first-child) {
-        margin-top: 2rem;
-    }
-
     .void-timeline__year {
         position: static;
+        transform: none;
         width: auto;
         margin-bottom: 0.4rem;
+        padding: 0;
+        background: none;
         text-align: left;
     }
 }

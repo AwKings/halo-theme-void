@@ -549,17 +549,17 @@ header .mobile-search-form .search-bar button:hover {
 #index-list .search-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.6rem;
+  gap: 30px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
-#index-list .search-list > li.search-item {
+/* 卡片外观完全沿用首页：masonry-item / style-0，这里只负责网格排布 */
+#index-list .search-list > li.masonry-item {
+  position: static;
   width: 100%;
   opacity: 1;
   margin: 0;
-  padding-bottom: 0;
-  border: none;
 }
 
 /* ===== 搜索条 / 结果 暗色 ===== */

@@ -82,6 +82,11 @@
 
   /* ---------- 分类筛选按钮 ---------- */
 
+  /* 移动端断点，与 CSS 的 @media (max-width: 767px) 保持一致 */
+  function isMobileViewport() {
+    return window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+  }
+
   function selectTab(tab) {
     activeGroup = tab.getAttribute('data-group') || 'all';
     tabs.forEach(function (t) {
@@ -95,6 +100,10 @@
     if (tabsTop) {
       var offset = tabsTop.getBoundingClientRect().top + window.scrollY;
       if (window.scrollY > offset) window.scrollTo({ top: offset, behavior: 'smooth' });
+    }
+    // 仅移动端：分类卡片处于展开态时，选中后自动收起
+    if (isMobileViewport() && isExpanded()) {
+      toggleExpanded();
     }
   }
 

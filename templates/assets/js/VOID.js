@@ -57,17 +57,6 @@ var VOID_Content = {
         });
     },
 
-    // 统计正文字数（中文按字、英文按词），对应 Typecho 插件里 contents.wordCount 字段
-    postWordCount: function () {
-        var el = document.querySelector('#post .articleBody');
-        var target = document.getElementById('post-word-count');
-        if (!el || !target) return;
-        var text = el.innerText || el.textContent || '';
-        var cn = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
-        var en = (text.replace(/[\u4e00-\u9fa5]/g, ' ').match(/[A-Za-z0-9]+/g) || []).length;
-        target.textContent = (cn + en) + ' 字';
-    },
-
     // 解析文章目录
     parseTOC: function () {
         if ($('.TOC').length > 0) {
@@ -209,7 +198,6 @@ var VOID = {
 
         VOID_Content.countWords();
         VOID_Content.archiveTooltips();
-        VOID_Content.postWordCount();
         VOID_Content.parseTOC();
         VOID_Content.parsePhotos();
         VOID_Content.highlight();
@@ -261,7 +249,6 @@ var VOID = {
         VOID_Ui.checkScrollTop();
         VOID_Content.countWords();
         VOID_Content.archiveTooltips();
-        VOID_Content.postWordCount();
         VOID_Content.parseTOC();
         VOID_Content.parsePhotos();
         VOID_Content.parseUrl();

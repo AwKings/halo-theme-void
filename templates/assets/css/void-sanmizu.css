@@ -726,3 +726,8 @@ body.theme-dark header .mobile-search-form .search-bar button:hover {
     gap: 1.2rem;
   }
 }
+
+/* 文章底部：赞赏与点赞按钮改为直角 */
+main #post .social-button .btn {
+    border-radius: 0;
+}

@@ -187,6 +187,7 @@
                     <span class="value" th:text="${post.stats?.upvote ?: 0}">0</span></a
                   >
                   <a
+                    th:if="${(theme.config.basic?.show_share ?: true) and (theme.config.basic?.share_x ?: true)}"
                     aria-label="分享到 X"
                     title="分享到 X"
                     href="javascript:void(0);"
@@ -195,6 +196,7 @@
                     ><i class="voidicon-twitter"></i
                   ></a>
                   <a
+                    th:if="${(theme.config.basic?.show_share ?: true) and (theme.config.basic?.share_weibo ?: true)}"
                     aria-label="分享到微博"
                     title="分享到微博"
                     href="javascript:void(0);"
@@ -203,6 +205,7 @@
                     ><i class="voidicon-weibo"></i
                   ></a>
                   <a
+                    th:if="${(theme.config.basic?.show_share ?: true) and (theme.config.basic?.share_qq ?: true)}"
                     aria-label="分享到 QQ"
                     title="分享到 QQ"
                     href="javascript:void(0);"
@@ -211,6 +214,7 @@
                     ><i class="voidicon-qq"></i
                   ></a>
                   <a
+                    th:if="${(theme.config.basic?.show_share ?: true) and (theme.config.basic?.share_wechat ?: true)}"
                     aria-label="微信扫码分享"
                     title="微信扫码分享"
                     href="javascript:void(0);"
@@ -219,6 +223,7 @@
                     ><i class="voidicon-wechat"></i
                   ></a>
                   <a
+                    th:if="${(theme.config.basic?.show_share ?: true) and (theme.config.basic?.share_copy ?: true)}"
                     aria-label="复制链接"
                     title="复制链接"
                     href="javascript:void(0);"

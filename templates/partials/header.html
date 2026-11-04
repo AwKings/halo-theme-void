@@ -58,22 +58,6 @@
         </th:block>
       </th:block>
 
-      <th:block th:with="moreLinks=${theme.config.advanced?.more_menu}">
-        <span class="dropdown" th:if="${moreLinks != null and !#lists.isEmpty(moreLinks)}">
-          <span class="dropdown-label">更多</span>
-          <ul>
-            <li th:each="link : ${moreLinks}">
-              <a
-                th:href="${link.href}"
-                th:text="${link.name}"
-                th:target="${link.target ?: '_blank'}"
-                th:attr="rel=${(link.target ?: '_blank') == '_blank' ? 'noopener' : null}"
-              ></a>
-            </li>
-          </ul>
-        </span>
-      </th:block>
-
       <a
         role="button"
         aria-label="展开搜索"

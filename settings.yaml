@@ -63,6 +63,31 @@ spec:
           label: 显示文章点赞按钮
           value: true
           help: "使用 Halo 自带的点赞统计（ENJOY），无需安装插件。"
+        - $formkit: checkbox
+          name: show_share
+          label: 显示文章分享按钮
+          value: true
+          help: "关闭后文章底部的分享图标整组隐藏。"
+        - $formkit: checkbox
+          name: share_x
+          label: 分享到 X
+          value: true
+        - $formkit: checkbox
+          name: share_weibo
+          label: 分享到微博
+          value: true
+        - $formkit: checkbox
+          name: share_qq
+          label: 分享到 QQ
+          value: true
+        - $formkit: checkbox
+          name: share_wechat
+          label: 微信扫码分享
+          value: true
+        - $formkit: checkbox
+          name: share_copy
+          label: 复制链接
+          value: true
 
     - group: content
       label: 内容与排版
@@ -222,25 +247,6 @@ spec:
           label: 自定义 Service Worker
           value: ""
           help: "文件名，需自行放置于站点根目录，例如 VOIDCacheRule.js。"
-        - $formkit: repeater
-          name: more_menu
-          label: 导航栏「更多」菜单
-          value: []
-          max: 20
-          help: "显示在导航栏「分类」之后的下拉菜单。留空则不显示。"
-          children:
-            - $formkit: text
-              name: name
-              label: 名称
-              value: ""
-            - $formkit: text
-              name: href
-              label: 链接
-              value: ""
-            - $formkit: text
-              name: target
-              label: 打开方式
-              value: "_blank"
         - $formkit: repeater
           name: social_links
           label: 侧边栏社交链接

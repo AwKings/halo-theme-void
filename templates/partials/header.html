@@ -98,7 +98,7 @@
 
 <div id="nav-mobile">
   <!-- 一级菜单是链接：直接平铺 -->
-  <section id="pages" data-title="PAGES">
+  <section id="pages" data-title="页面">
     <nav>
       <th:block th:with="menu=${menuFinder.getPrimary()}">
         <th:block th:if="${menu != null}">
@@ -127,15 +127,6 @@
         th:href="@{${child.status.href}}"
         th:text="${child.status.displayName}"
         th:target="${child.spec.target?.value}"
-      ></a>
-    </nav>
-  </section>
-  <section id="categories" data-title="CATEGORIES">
-    <nav>
-      <a
-        th:each="cat : ${categoryFinder.listAll()}"
-        th:href="@{${cat.status.permalink}}"
-        th:text="${cat.spec.displayName}"
       ></a>
     </nav>
   </section>

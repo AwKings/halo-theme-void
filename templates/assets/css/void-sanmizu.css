@@ -1057,3 +1057,19 @@ main #post .social-button .btn {
 #pjax-container:has(.void-timeline) .void-timeline {
     margin-top: 0;
 }
+
+/* ---------------------------------------------------------------
+   分页：当前页背景与悬浮态一致
+   原样式只写了 .pager li.current a，而当前页渲染的是 <span>，
+   导致当前页没有背景，只有悬浮其它页码时才有黑底。
+   --------------------------------------------------------------- */
+.pager li.current > a,
+.pager li.current > span {
+  background: rgba(0, 0, 0, 0.98);
+  color: #fff;
+}
+
+.theme-dark .pager li.current > a,
+.theme-dark .pager li.current > span {
+  color: #cececf;
+}
